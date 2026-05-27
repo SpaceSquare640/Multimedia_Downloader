@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="{{ lang_code }}">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ t.t('app_title') }} · v3.0</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+</head>
+<body>
+  <header class="header">
+    <div class="header-left">
+      <span class="header-icon">⬇</span>
+      <span class="header-title">{{ t.t('app_title') }}</span>
+      <span class="header-version">v3.0</span>
+    </div>
+    <div class="header-right">
+      <span class="header-subtitle">{{ t.t('app_subtitle') }}</span>
+      <label class="lang-label">
+        <span>{{ t.t('language') }}:</span>
+        <select id="lang-select">
+          {% for code, label in lang_display.items() %}
+            <option value="{{ code }}" {% if code == lang_code %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </label>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- ── Submission form ──────────────────────────────────────────────── -->
+    <section class="card">
+      <h2 data-i18n="sec_urls">{{ t.t('sec_urls') }}</h2>
+      <textarea id="urls" rows="5" placeholder="{{ t.t('web_url_placeholder') }}"
+                data-i18n-placeholder="web_url_placeholder"></textarea>
+
+      <div class="row">
+        <label>
+          <span data-i18n="sec_mode">{{ t.t('sec_mode') }}</span>
+          <select id="mode">
+            <option value="video" data-i18n="mode_video">{{ t.t('mode_video') }}</option>
+            <option value="audio" data-i18n="mode_audio">{{ t.t('mode_audio') }}</option>
+          </select>
+        </label>
+
+        <label id="video-fmt-wrap">
+          <span data-i18n="lbl_video_fmt">{{ t.t('lbl_video_fmt') }}</span>
+          <select id="video_fmt">
+            {% for f in video_fmts %}<option value="{{ f }}">{{ f }}</option>{% endfor %}
+          </select>
+        </label>
+
+        <label id="audio-fmt-wrap" hidden>
+          <span data-i18n="lbl_audio_fmt">{{ t.t('lbl_audio_fmt') }}</span>
+          <select id="audio_fmt">
+            {% for f in audio_fmts %}<option value="{{ f }}">{{ f }}</option>{% endfor %}
+          </select>
+        </label>
+
+        <label>
+          <span data-i18n="lbl_quality">{{ t.t('lbl_quality') }}</span>
+          <select id="quality">
+            {% for q in qualities %}<option value="{{ q }}">{{ q }}</option>{% endfor %}
+          </select>
+        </label>
+
+        <label>
+          <span data-i18n="cookie_m1">{{ t.t('cookie_m1') }}</span>
+          <select id="browser">
+            {% for b in browsers %}<option value="{{ b }}">{{ b }}</option>{% endfor %}
+          </select>
+        </label>
+      </div>
+
+      <div class="row">
+        <button id="submit-btn" class="btn-primary" data-i18n="btn_start_download">
+          {{ t.t('btn_start_download') }}
+        </button>
+        <button id="stop-btn" class="btn-danger" data-i18n="btn_stop">
+          {{ t.t('btn_stop') }}
+        </button>
+        <button id="clear-btn" class="btn-ghost" data-i18n="web_clear_completed">
+          {{ t.t('web_clear_completed') }}
+        </button>
+      </div>
+    </section>
+
+    <!-- ── Job list ─────────────────────────────────────────────────────── -->
+    <section class="card">
+      <h2 data-i18n="log_title">{{ t.t('log_title') }}</h2>
+      <div id="job-list" class="job-list">
+        <p class="empty" data-i18n="web_no_jobs">{{ t.t('web_no_jobs') }}</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer" data-i18n="web_footer">{{ t.t('web_footer') }}</footer>
+
+  <script>
+    window.INITIAL_LANG = "{{ lang_code }}";
+  </script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
