@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+/* Class-based dark mode: `dark` class on <html> (managed by src/lib/theme.ts,
+   pre-applied by the inline script in index.html to avoid a flash). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans TC", "Noto Sans SC", sans-serif;
+  --font-mono: "Cascadia Code", Consolas, "SF Mono", monospace;
+}
+
+html, body { height: 100%; }
+
+body {
+  @apply bg-zinc-100 text-zinc-900 antialiased dark:bg-zinc-950 dark:text-zinc-100;
+}
+
+/* iOS safe-area helpers (viewport-fit=cover in index.html) */
+.pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+.pt-safe { padding-top: env(safe-area-inset-top); }
+
+/* Consistent focus ring for keyboard users */
+:where(button, a, input, select, textarea, [role="tab"]):focus-visible {
+  @apply outline-2 outline-offset-2 outline-indigo-500;
+}
+
+/* Slim scrollbars that fit the dark theme */
+* { scrollbar-width: thin; scrollbar-color: theme(--color-zinc-400) transparent; }
+.dark * { scrollbar-color: theme(--color-zinc-700) transparent; }

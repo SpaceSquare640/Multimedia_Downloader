@@ -1,0 +1,18 @@
+[package]
+name = "multimedia-downloader"
+version = "4.0.0"
+description = "Multimedia Downloader V4.0 — Tauri desktop shell"
+edition = "2021"
+rust-version = "1.77"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[profile.release]
+strip = true
+lto = true

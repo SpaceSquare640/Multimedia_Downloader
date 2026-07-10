@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- viewport-fit=cover → lets us use env(safe-area-inset-*) on iOS notch devices -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Multimedia Downloader</title>
+    <meta name="description" content="Download video/audio from 500+ platforms and convert formats — with an AI assistant for batch jobs." />
+
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#09090b" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/32.png" />
+    <link rel="apple-touch-icon" href="/icons/128.png" />
+    <!-- iOS standalone web-app -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="MMDL" />
+    <meta name="mobile-web-app-capable" content="yes" />
+
+    <!-- Apply saved theme BEFORE the app mounts to avoid a light-mode flash.
+         Mirrors the logic in src/lib/theme.ts (localStorage key must match). -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem("mmdl_theme") || "dark";
+          var dark = t === "dark" || (t === "system" && matchMedia("(prefers-color-scheme: dark)").matches);
+          if (dark) document.documentElement.classList.add("dark");
+        } catch (e) { document.documentElement.classList.add("dark"); }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

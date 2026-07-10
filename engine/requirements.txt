@@ -1,0 +1,2 @@
+yt-dlp
+# ffmpeg is an external binary (not a pip package) — install separately and add to PATH.

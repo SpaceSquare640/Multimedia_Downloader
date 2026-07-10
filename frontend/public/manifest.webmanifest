@@ -1,0 +1,13 @@
+{
+  "name": "Multimedia Downloader",
+  "short_name": "MMDL",
+  "description": "Download video/audio from 500+ platforms and convert formats — with an AI assistant for batch jobs.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#09090b",
+  "theme_color": "#09090b",
+  "icons": [
+    { "src": "/icons/128.png", "sizes": "128x128", "type": "image/png" },
+    { "src": "/icons/512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

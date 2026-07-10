@@ -1,0 +1,28 @@
+# Secrets — NEVER commit the OpenRouter API key
+.env
+*.key
+config.local.json
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Node / frontend
+node_modules/
+dist/
+.vite/
+
+# Rust / Tauri
+target/
+src-tauri/target/
+src-tauri/gen/
+
+# Packaging build artifacts (PyInstaller output — large, regenerable)
+packaging/dist/
+packaging/build/
+
+# Downloads / output
+downloads/
+*.log
