@@ -6,6 +6,25 @@
 
 ## English
 
+### [4.1.0] — 2026-07-17
+
+#### Added
+- **Standalone web version** — the same UI now runs as a real, deployable web
+  app via `web_app.py` (Flask + Server-Sent Events), driving the *same* engine
+  (real yt-dlp / ffmpeg, not the browser mock). Build with
+  `npm run build:frontend:web`, serve with `npm run web`
+  (`HOST`/`PORT`/`MMDL_DOWNLOADS` configurable). It reuses the desktop's exact
+  command/event protocol — only the transport changes (stdio → HTTP + SSE) —
+  so the engine and AI code are untouched. Doubles as phone-browser access
+  ahead of native mobile apps.
+
+#### Fixed
+- **AI Assistant runtime error** — the planner/summarizer OpenRouter model
+  slugs had been delisted upstream, so the first planner call failed. Swapped
+  to current free models (`meta-llama/llama-3.3-70b-instruct:free` planner,
+  `meta-llama/llama-3.2-3b-instruct:free` summarizer); the AI Assistant works
+  again on the packaged build. This resolves the V4.0 known limitation.
+
 ### [4.0.0] — 2026-07-10
 
 #### Added
@@ -53,15 +72,29 @@
 
 ### [3.0.0] — 2026-05-27 and earlier
 
-V3.0 (the tkinter/Flask generation of this app) lives on its own
-[`Version3.0` branch](https://github.com/SpaceSquare640/Multimedia_Downloader/tree/Version3.0)
-of this repository — see its
-[CHANGELOG](https://github.com/SpaceSquare640/Multimedia_Downloader/blob/Version3.0/CHANGELOG.md)
-for the full history.
+See the V3.0 changelog for the full history up to the tkinter/Flask
+generation of the app: the [Version-3 branch CHANGELOG](https://github.com/SpaceSquare640/Multimedia_Downloader/blob/Version-3/CHANGELOG.md).
 
 ---
 
 ## 繁體中文
+
+### [4.1.0] — 2026-07-17
+
+#### 新增
+- **獨立網頁版** — 同一套 UI 現在可透過 `web_app.py`（Flask + Server-Sent
+  Events）作為真正、可部署的網頁版執行，驅動**同一個引擎**（真 yt-dlp /
+  ffmpeg，非瀏覽器模擬）。以 `npm run build:frontend:web` 建置、`npm run web`
+  執行（`HOST`／`PORT`／`MMDL_DOWNLOADS` 可設定）。它重用桌面版完全相同的
+  指令/事件協定——只換傳輸層（stdio → HTTP + SSE）——引擎與 AI 程式碼一行
+  未改。也順帶讓手機瀏覽器可用，先於原生行動 App。
+
+#### 修復
+- **AI 助手運行時錯誤** — planner/summarizer 的 OpenRouter 模型 slug 被上游
+  下架，導致第一個 planner 呼叫失敗。已換成現行免費模型（planner
+  `meta-llama/llama-3.3-70b-instruct:free`、summarizer
+  `meta-llama/llama-3.2-3b-instruct:free`）；AI 助手在打包版上恢復正常。此項
+  解除了 V4.0 的已知限制。
 
 ### [4.0.0] — 2026-07-10
 
@@ -102,14 +135,29 @@ for the full history.
 
 ### [3.0.0] — 2026-05-27 及更早
 
-V3.0（tkinter/Flask 世代）位於本 repo 自己的
-[`Version3.0` branch](https://github.com/SpaceSquare640/Multimedia_Downloader/tree/Version3.0)——
-完整變更歷程見其
-[CHANGELOG](https://github.com/SpaceSquare640/Multimedia_Downloader/blob/Version3.0/CHANGELOG.md)。
+tkinter/Flask 世代的完整變更歷程見 V3.0 changelog：
+the [Version-3 branch CHANGELOG](https://github.com/SpaceSquare640/Multimedia_Downloader/blob/Version-3/CHANGELOG.md)。
 
 ---
 
 ## 简体中文
+
+### [4.1.0] — 2026-07-17
+
+#### 新增
+- **独立网页版** — 同一套 UI 现在可通过 `web_app.py`（Flask + Server-Sent
+  Events）作为真正、可部署的网页版运行，驱动**同一个引擎**（真 yt-dlp /
+  ffmpeg，非浏览器模拟）。以 `npm run build:frontend:web` 构建、`npm run web`
+  运行（`HOST`／`PORT`／`MMDL_DOWNLOADS` 可配置）。它复用桌面版完全相同的
+  指令/事件协议——只换传输层（stdio → HTTP + SSE）——引擎与 AI 代码一行未
+  改。也顺带让手机浏览器可用，先于原生移动 App。
+
+#### 修复
+- **AI 助手运行时错误** — planner/summarizer 的 OpenRouter 模型 slug 被上游
+  下架，导致第一个 planner 调用失败。已换成现行免费模型（planner
+  `meta-llama/llama-3.3-70b-instruct:free`、summarizer
+  `meta-llama/llama-3.2-3b-instruct:free`）；AI 助手在打包版上恢复正常。此项
+  解除了 V4.0 的已知限制。
 
 ### [4.0.0] — 2026-07-10
 
@@ -150,7 +198,5 @@ V3.0（tkinter/Flask 世代）位於本 repo 自己的
 
 ### [3.0.0] — 2026-05-27 及更早
 
-V3.0（tkinter/Flask 世代）位于本 repo 自己的
-[`Version3.0` branch](https://github.com/SpaceSquare640/Multimedia_Downloader/tree/Version3.0)——
-完整变更历程见其
-[CHANGELOG](https://github.com/SpaceSquare640/Multimedia_Downloader/blob/Version3.0/CHANGELOG.md)。
+tkinter/Flask 世代的完整变更历程见 V3.0 changelog：
+the [Version-3 branch CHANGELOG](https://github.com/SpaceSquare640/Multimedia_Downloader/blob/Version-3/CHANGELOG.md)。

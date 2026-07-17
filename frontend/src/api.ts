@@ -7,16 +7,16 @@
  * the desktop shell. Both emit the SAME event shape the sidecar defines, so
  * the UI code is identical in either environment.
  *
- * ⚠️ SCOPE NOTE (2026-07-10): V4.0's ONLY real production target is the Tauri
- * desktop app. There is currently NO HTTP/WebSocket backend — opening this
- * frontend in a plain browser (outside Tauri) is DEV-PREVIEW ONLY: MockApi
- * fakes progress with setTimeout and never touches yt-dlp/ffmpeg. This is a
- * deliberate scope decision, not an unfinished feature — V3.0's `web_app.py`
- * (a real deployable Flask backend) has no V4.0 equivalent yet. Whether V4.0
- * gets a real standalone web deployment is still undecided; see
- * `System_Architecture/V4.0 System Architecture.md` §8 in the Obsidian vault.
- * Do not build toward "the web version works for real" without re-confirming
- * scope with the user first.
+ * Three transports, selected at load time:
+ *   - TauriApi  — inside the desktop shell (Rust IPC → stdio sidecar).
+ *   - WebApi    — served by `web_app.py` (HTTP POST commands + SSE events).
+ *                 Enabled by the `VITE_BACKEND=web` build flag (`build:web`).
+ *   - MockApi   — plain browser preview with no backend (vite dev): fakes
+ *                 progress with setTimeout, never touches yt-dlp/ffmpeg.
+ *
+ * All three emit the SAME event shape the sidecar defines, so the UI code is
+ * identical regardless of transport. (V4.1 added WebApi — the real deployable
+ * web version; see `System_Architecture/V4.0 System Architecture.md` §8.)
  */
 
 export type Formats = {
@@ -118,6 +118,53 @@ class TauriApi implements Api {
       listen<EngineEvent>("engine-event", (ev) => cb(ev.payload)).then((u) => (unlisten = u)),
     );
     return () => unlisten?.();
+  }
+}
+
+// ── Real (web backend) transport ─────────────────────────────────────────────
+// Talks to web_app.py over the same origin: POST for commands, SSE for events.
+class WebApi implements Api {
+  private async get<T>(path: string): Promise<T> {
+    const r = await fetch(path);
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return r.json() as Promise<T>;
+  }
+  private async post<T>(path: string, body?: unknown): Promise<T> {
+    const r = await fetch(path, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: body === undefined ? undefined : JSON.stringify(body),
+    });
+    if (!r.ok) {
+      let msg = `HTTP ${r.status}`;
+      try {
+        const j = await r.json();
+        if (j?.error) msg = String(j.error);
+      } catch { /* non-JSON error body */ }
+      throw new Error(msg);
+    }
+    if (r.status === 204) return undefined as T;
+    return r.json() as Promise<T>;
+  }
+
+  getFormats() { return this.get<Formats>("/api/formats"); }
+  getLocales() { return this.get<Record<string, string>>("/api/locales"); }
+  async startDownload(args: DownloadArgs) { await this.post("/api/download", args); }
+  async startConvert(args: ConvertArgs) { await this.post("/api/convert", args); }
+  aiPlan(apiKey: string, prompt: string, context: AiContext) {
+    return this.post<AiPlan>("/api/ai_plan", { api_key: apiKey, prompt, context });
+  }
+  runQueue(tasks: AiTask[]) {
+    return this.post<{ tasks: QueueResultTask[] }>("/api/run_queue", { tasks });
+  }
+  async stop() { await this.post("/api/stop"); }
+
+  onEvent(cb: (e: EngineEvent) => void): () => void {
+    const es = new EventSource("/events");
+    es.onmessage = (ev) => {
+      try { cb(JSON.parse(ev.data) as EngineEvent); } catch { /* keep-alive/comment */ }
+    };
+    return () => es.close();
   }
 }
 
@@ -273,8 +320,17 @@ class MockApi implements Api {
   }
 }
 
-export const api: Api = isTauri ? new TauriApi() : new MockApi();
-export const IS_MOCK = !isTauri;
+// Non-Tauri selection is decided at build time: `VITE_BACKEND=web` (the
+// `build:web` script) picks the real web backend; otherwise mock preview.
+const USE_WEB = import.meta.env.VITE_BACKEND === "web";
+
+export const api: Api = isTauri
+  ? new TauriApi()
+  : USE_WEB
+    ? new WebApi()
+    : new MockApi();
+/** True only in the no-backend browser preview (fakes progress, no real work). */
+export const IS_MOCK = !isTauri && !USE_WEB;
 /** True when running inside the Tauri desktop shell (native dialogs, IPC…). */
 export const IS_TAURI = isTauri;
 export { FORMATS as MOCK_FORMATS };

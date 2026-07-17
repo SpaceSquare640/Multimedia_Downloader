@@ -1,4 +1,4 @@
-# Multimedia Downloader — V4.0
+# Multimedia Downloader — V4.1
 
 A cross-platform multimedia downloader & format converter built on top of
 [yt-dlp](https://github.com/yt-dlp/yt-dlp) and `ffmpeg`, with an AI assistant
@@ -29,13 +29,13 @@ built with [Tauri](https://tauri.app).
   per-item progress and a run log.
 
 > [!NOTE]
-> V4.0 is a desktop app only. A real, network-deployable web version (like
-> V3.0's `web_app.py`) is planned for **V4.1**; native mobile apps are planned
-> for **V5.0**.
+> Primarily a desktop app; **V4.1** adds a real, network-deployable web version
+> (see [Run as a web app](#run-as-a-web-app-v41) below). Native mobile apps are
+> planned for **V5.0**.
 
 ### Install (end users)
 
-1. Download the installer for your platform from `Packaged/` (Windows: `.exe`
+1. Download the installer for your platform from the [Releases page](https://github.com/SpaceSquare640/Multimedia_Downloader/releases/latest) (Windows: `.exe`
    or `.msi`).
 2. Run it and follow the prompts.
 3. Launch **Multimedia Downloader** from the Start Menu / Applications.
@@ -45,11 +45,10 @@ the app.
 
 ### Using the AI Assistant
 
-> [!WARNING]
-> The AI Assistant currently errors at runtime in the 4.0.0 build. A fix is
-> scheduled for **v4.1** (shipping alongside the real web version). All other
-> features (video/audio download, format conversion, batch queue) are
-> unaffected and verified working.
+> [!NOTE]
+> The AI Assistant runtime error in the 4.0.0 build is **fixed in v4.1** (the
+> planner/summarizer OpenRouter models had been delisted upstream and were
+> swapped for current free models).
 
 1. Click the **✨ AI Assistant** button (or press `Ctrl/Cmd+K`).
 2. First time only: open **Settings** and paste your own
@@ -72,7 +71,7 @@ the app.
 ### Building from source (developers)
 
 ```bash
-git clone -b Version4.0 https://github.com/SpaceSquare640/Multimedia_Downloader.git
+git clone -b Version-4 https://github.com/SpaceSquare640/Multimedia_Downloader.git
 cd Multimedia_Downloader
 npm install                 # installs the Tauri CLI at the project root
 npm run tauri dev           # compile + run in dev mode (needs Python 3.8+, Rust, Node)
@@ -80,6 +79,28 @@ npm run package             # build installers -> Packaged/Version4.0_Packaged
 ```
 
 Run the Python test suite: `python -m unittest discover -s tests` (63 tests).
+
+### Run as a web app (V4.1)
+
+The same UI can run as a standalone, deployable web app — no desktop shell —
+with a real Flask + SSE backend that drives the *same* engine (real yt-dlp /
+ffmpeg, not the browser mock):
+
+```bash
+cd Multimedia_Downloader
+pip install -r requirements-web.txt   # yt-dlp + Flask (ffmpeg on PATH)
+npm run build:frontend:web            # build the frontend in web mode
+npm run web                           # serve on http://127.0.0.1:5000
+# LAN / server:
+HOST=0.0.0.0 PORT=8000 python web_app.py
+```
+
+Because it's a browser app, downloaded/converted files land in a **server-side**
+folder (`MMDL_DOWNLOADS`, default `./downloads`) retrievable at `/files/<name>`
+— leave the Save-Location field blank to use it. It's a single-user model (one
+operation at a time, like V3.0's `web_app.py`); for production put it behind a
+streaming-friendly WSGI worker, e.g. `gunicorn -k gthread -w 1 --threads 8
+web_app:app`, and add your own auth if exposing it beyond localhost.
 
 ### Project layout
 
@@ -89,6 +110,7 @@ Version4.0/
 ├── frontend/     Web UI (Svelte + Vite + TS + Tailwind)
 ├── engine/       Python engine: Downloader / Converter (yt-dlp + ffmpeg)
 ├── engine_sidecar.py   stdio IPC entrypoint spawned by the Rust shell
+├── web_app.py    Flask + SSE backend for the standalone web app (V4.1)
 ├── ai/           OpenRouter client + multi-model planning pipeline
 ├── locales/      en.json / zh_tw.json / zh_cn.json
 ├── packaging/    PyInstaller spec + build script
@@ -130,12 +152,12 @@ of service and the copyright of content owners.
 - **批次佇列** — 一次下載或轉換多個項目，即時逐項進度與運行日誌。
 
 > [!NOTE]
-> V4.0 目前僅為桌面 app。真正可部署、能用的網頁版（如 V3.0 的
-> `web_app.py`）規劃於 **V4.1**；原生行動 App 規劃於 **V5.0**。
+> 以桌面 app 為主；**V4.1** 新增真正可部署的網頁版（見下方「以網頁版執
+> 行」）。原生行動 App 規劃於 **V5.0**。
 
 ### 安裝（一般使用者）
 
-1. 從 `Packaged/` 下載對應平台的安裝檔（Windows：`.exe` 或 `.msi`）。
+1. 從 [Releases 頁面](https://github.com/SpaceSquare640/Multimedia_Downloader/releases/latest) 下載對應平台的安裝檔（Windows：`.exe` 或 `.msi`）。
 2. 執行並依提示安裝。
 3. 從開始選單／應用程式啟動 **Multimedia Downloader**。
 
@@ -143,10 +165,9 @@ of service and the copyright of content owners.
 
 ### 使用 AI 助手
 
-> [!WARNING]
-> 4.0.0 版本中 AI 助手目前運行時會發生錯誤，修復已排入 **v4.1**（與真正的
-> 網頁版一併推出）。其餘功能（影片/音訊下載、格式轉換、批次佇列）不受影
-> 響，已驗證正常。
+> [!NOTE]
+> 4.0.0 版本中 AI 助手的運行時錯誤已在 **v4.1 修復**（planner/summarizer 的
+> OpenRouter 模型遭上游下架，已換成現行免費模型）。
 
 1. 點擊 **✨ AI 助手** 按鈕（或按 `Ctrl/Cmd+K`）。
 2. 第一次使用需到**設定**貼上你自己的
@@ -168,7 +189,7 @@ of service and the copyright of content owners.
 ### 從原始碼建置（開發者）
 
 ```bash
-git clone -b Version4.0 https://github.com/SpaceSquare640/Multimedia_Downloader.git
+git clone -b Version-4 https://github.com/SpaceSquare640/Multimedia_Downloader.git
 cd Multimedia_Downloader
 npm install                 # 於專案根目錄安裝 Tauri CLI
 npm run tauri dev           # 編譯並以開發模式執行（需 Python 3.8+、Rust、Node）
@@ -176,6 +197,25 @@ npm run package             # 建置安裝檔 → Packaged/Version4.0_Packaged
 ```
 
 執行 Python 測試套件：`python -m unittest discover -s tests`（63 項測試）。
+
+### 以網頁版執行（V4.1）
+
+同一套 UI 可作為獨立、可部署的**網頁版**執行（不需桌面外殼），後端是真正的
+Flask + SSE，驅動**同一個引擎**（真 yt-dlp / ffmpeg，非瀏覽器模擬）：
+
+```bash
+cd Multimedia_Downloader
+pip install -r requirements-web.txt   # yt-dlp + Flask（ffmpeg 需在 PATH）
+npm run build:frontend:web            # 以 web 模式建置前端
+npm run web                           # 服務於 http://127.0.0.1:5000
+# 區網 / 伺服器：
+HOST=0.0.0.0 PORT=8000 python web_app.py
+```
+
+因為是瀏覽器 app，下載/轉換的檔案會落在**伺服器端**資料夾（`MMDL_DOWNLOADS`，
+預設 `./downloads`），可經 `/files/<檔名>` 取回——存放位置欄位留空即用它。採單一
+使用者模型（一次一個操作，同 V3.0 的 `web_app.py`）；正式部署請置於支援串流的
+WSGI worker 後（例如 `gunicorn -k gthread -w 1 --threads 8 web_app:app`），對外開放時請自行加上驗證。
 
 ### Cookie 提示
 
@@ -210,12 +250,12 @@ npm run package             # 建置安裝檔 → Packaged/Version4.0_Packaged
 - **批次队列** — 一次下载或转换多个项目，实时逐项进度与运行日志。
 
 > [!NOTE]
-> V4.0 目前仅为桌面 app。真正可部署、能用的网页版（如 V3.0 的
-> `web_app.py`）规划于 **V4.1**；原生移动端 App 规划于 **V5.0**。
+> 以桌面 app 为主；**V4.1** 新增真正可部署的网页版（见下方「以网页版运
+> 行」）。原生移动端 App 规划于 **V5.0**。
 
 ### 安装（普通用户）
 
-1. 从 `Packaged/` 下载对应平台的安装包（Windows：`.exe` 或 `.msi`）。
+1. 从 [Releases 页面](https://github.com/SpaceSquare640/Multimedia_Downloader/releases/latest) 下载对应平台的安装包（Windows：`.exe` 或 `.msi`）。
 2. 运行并按提示安装。
 3. 从开始菜单／应用程序启动 **Multimedia Downloader**。
 
@@ -223,10 +263,9 @@ npm run package             # 建置安裝檔 → Packaged/Version4.0_Packaged
 
 ### 使用 AI 助手
 
-> [!WARNING]
-> 4.0.0 版本中 AI 助手目前运行时会发生错误，修复已排入 **v4.1**（与真正的
-> 网页版一并推出）。其余功能（视频/音频下载、格式转换、批次队列）不受影
-> 响，已验证正常。
+> [!NOTE]
+> 4.0.0 版本中 AI 助手的运行时错误已在 **v4.1 修复**（planner/summarizer 的
+> OpenRouter 模型被上游下架，已换成现行免费模型）。
 
 1. 点击 **✨ AI 助手** 按钮（或按 `Ctrl/Cmd+K`）。
 2. 首次使用需到**设置**粘贴你自己的
@@ -248,7 +287,7 @@ npm run package             # 建置安裝檔 → Packaged/Version4.0_Packaged
 ### 从源代码构建（开发者）
 
 ```bash
-git clone -b Version4.0 https://github.com/SpaceSquare640/Multimedia_Downloader.git
+git clone -b Version-4 https://github.com/SpaceSquare640/Multimedia_Downloader.git
 cd Multimedia_Downloader
 npm install                 # 在项目根目录安装 Tauri CLI
 npm run tauri dev           # 编译并以开发模式运行（需 Python 3.8+、Rust、Node）
@@ -256,6 +295,25 @@ npm run package             # 构建安装包 → Packaged/Version4.0_Packaged
 ```
 
 运行 Python 测试套件：`python -m unittest discover -s tests`（63 项测试）。
+
+### 以网页版运行（V4.1）
+
+同一套 UI 可作为独立、可部署的**网页版**运行（不需桌面外壳），后端是真正的
+Flask + SSE，驱动**同一个引擎**（真 yt-dlp / ffmpeg，非浏览器模拟）：
+
+```bash
+cd Multimedia_Downloader
+pip install -r requirements-web.txt   # yt-dlp + Flask（ffmpeg 需在 PATH）
+npm run build:frontend:web            # 以 web 模式构建前端
+npm run web                           # 服务于 http://127.0.0.1:5000
+# 局域网 / 服务器：
+HOST=0.0.0.0 PORT=8000 python web_app.py
+```
+
+因为是浏览器 app，下载/转换的文件会落在**服务器端**文件夹（`MMDL_DOWNLOADS`，
+默认 `./downloads`），可经 `/files/<文件名>` 取回——存放位置栏位留空即用它。采用单
+用户模型（一次一个操作，同 V3.0 的 `web_app.py`）；正式部署请置于支持流式的 WSGI
+worker 后（例如 `gunicorn -k gthread -w 1 --threads 8 web_app:app`），对外开放时请自行加上鉴权。
 
 ### Cookie 提示
 

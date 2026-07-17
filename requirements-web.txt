@@ -1,0 +1,4 @@
+# Web version (V4.1) — standalone deployable backend for web_app.py.
+# The engine itself only needs yt-dlp (+ ffmpeg on PATH); this adds the web server.
+yt-dlp
+flask>=3.0

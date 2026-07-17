@@ -1,6 +1,6 @@
 {
   "name": "multimedia-downloader-v4",
-  "version": "4.0.0-dev",
+  "version": "4.1.0",
   "private": true,
   "description": "V4.0 desktop app root — Tauri orchestration. frontend/ = Svelte web UI, src-tauri/ = Rust shell, engine/ + engine_sidecar.py = Python engine.",
   "scripts": {
@@ -10,7 +10,9 @@
     "dev": "tauri dev",
     "build": "tauri build",
     "sidecar": "python -m PyInstaller packaging/engine_sidecar.spec --noconfirm --distpath packaging/dist --workpath packaging/build",
-    "package": "powershell -ExecutionPolicy Bypass -File packaging/build-desktop.ps1"
+    "package": "powershell -ExecutionPolicy Bypass -File packaging/build-desktop.ps1",
+    "build:frontend:web": "npm --prefix frontend run build:web",
+    "web": "python web_app.py"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2"

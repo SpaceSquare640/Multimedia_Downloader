@@ -1,6 +1,6 @@
 {
   "name": "multimedia-downloader-frontend",
-  "version": "4.0.0-dev",
+  "version": "4.1.0",
   "description": "V4.0 web frontend (Svelte + Vite + TS): floating window with 4 tabs, wired to the Python engine via Tauri IPC.",
   "type": "module",
   "scripts": {
@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "build:web": "vite build --mode web"
   },
   "license": "ISC",
   "devDependencies": {
