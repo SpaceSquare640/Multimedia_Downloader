@@ -73,7 +73,7 @@
 ### [3.0.0] — 2026-05-27 and earlier
 
 See the V3.0 changelog for the full history up to the tkinter/Flask
-generation of the app: the [Version-3 branch CHANGELOG](https://github.com/SpaceSquare640/Multimedia_Downloader/blob/Version-3/CHANGELOG.md).
+generation of the app: the [v3.0.0 CHANGELOG](https://github.com/SpaceSquare640/Multimedia_Downloader/blob/v3.0.0/CHANGELOG.md).
 
 ---
 
@@ -136,7 +136,7 @@ generation of the app: the [Version-3 branch CHANGELOG](https://github.com/Space
 ### [3.0.0] — 2026-05-27 及更早
 
 tkinter/Flask 世代的完整變更歷程見 V3.0 changelog：
-the [Version-3 branch CHANGELOG](https://github.com/SpaceSquare640/Multimedia_Downloader/blob/Version-3/CHANGELOG.md)。
+the [v3.0.0 CHANGELOG](https://github.com/SpaceSquare640/Multimedia_Downloader/blob/v3.0.0/CHANGELOG.md)。
 
 ---
 
@@ -199,4 +199,4 @@ the [Version-3 branch CHANGELOG](https://github.com/SpaceSquare640/Multimedia_Do
 ### [3.0.0] — 2026-05-27 及更早
 
 tkinter/Flask 世代的完整变更历程见 V3.0 changelog：
-the [Version-3 branch CHANGELOG](https://github.com/SpaceSquare640/Multimedia_Downloader/blob/Version-3/CHANGELOG.md)。
+the [v3.0.0 CHANGELOG](https://github.com/SpaceSquare640/Multimedia_Downloader/blob/v3.0.0/CHANGELOG.md)。

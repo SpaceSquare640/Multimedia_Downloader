@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📖 Documentation (Wiki)
+    url: https://github.com/SpaceSquare640/Multimedia_Downloader/wiki
+    about: Installation guide, architecture, roadmap, and FAQ.
+  - name: 💬 Questions & discussion
+    url: https://github.com/SpaceSquare640/Multimedia_Downloader/discussions
+    about: Ask a question or share how you use the app.
