@@ -20,13 +20,16 @@ python -m pip install --upgrade --quiet flask yt-dlp
 # The built web UI isn't in the git repo — fetch the prebuilt bundle once.
 if [ ! -f frontend/dist/index.html ]; then
   echo "Fetching prebuilt web UI (frontend-dist.zip)…"
-  curl -L -o /tmp/mmdl-dist.zip \
+  # Use a writable temp dir. Termux has no /tmp — $TMPDIR points at $PREFIX/tmp.
+  zip="${TMPDIR:-/tmp}/mmdl-dist.zip"
+  curl -L -o "$zip" \
     "https://github.com/SpaceSquare640/Multimedia_Downloader/releases/latest/download/frontend-dist.zip"
   mkdir -p frontend && rm -rf frontend/dist
-  python - <<'PY'
-import zipfile
-zipfile.ZipFile("/tmp/mmdl-dist.zip").extractall("frontend")
+  MMDL_ZIP="$zip" python - <<'PY'
+import os, zipfile
+zipfile.ZipFile(os.environ["MMDL_ZIP"]).extractall("frontend")
 PY
+  rm -f "$zip"
 fi
 
 export HOST="${HOST:-127.0.0.1}"
