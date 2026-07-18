@@ -20,7 +20,7 @@ on:
         options:
           - all
           - ubuntu-22.04
-          - macos-13
+          - macos-14
           - windows-latest
 
 permissions:
@@ -40,7 +40,7 @@ jobs:
         run: |
           only="${{ github.event.inputs.only || 'all' }}"
           if [ "$only" = "all" ]; then
-            echo 'matrix={"platform":["ubuntu-22.04","macos-13","windows-latest"]}' >> "$GITHUB_OUTPUT"
+            echo 'matrix={"platform":["ubuntu-22.04","macos-14","windows-latest"]}' >> "$GITHUB_OUTPUT"
           else
             echo "matrix={\"platform\":[\"$only\"]}" >> "$GITHUB_OUTPUT"
           fi
@@ -100,9 +100,11 @@ jobs:
           packaging/dist/engine_sidecar/ffmpeg -version | head -1
 
       - name: Stage ffmpeg — macOS
-        if: matrix.platform == 'macos-13'
+        if: matrix.platform == 'macos-14'
         run: |
-          curl -L -o ffmpeg.zip https://evermeet.cx/ffmpeg/getrelease/ffmpeg/zip
+          arch=$(uname -m)                       # arm64 on macos-14
+          [ "$arch" = "arm64" ] && a=arm64 || a=amd64
+          curl -L -o ffmpeg.zip "https://ffmpeg.martin-riedl.de/redirect/latest/macos/$a/release/ffmpeg.zip"
           mkdir ffmpeg-dl && unzip -o ffmpeg.zip -d ffmpeg-dl
           cp "$(find ffmpeg-dl -name ffmpeg -type f | head -1)" packaging/dist/engine_sidecar/ffmpeg
           chmod +x packaging/dist/engine_sidecar/ffmpeg
