@@ -13,6 +13,15 @@ on:
         description: "Existing release tag to attach installers to (e.g. v4.1.0)"
         required: true
         default: v4.1.0
+      only:
+        description: "Limit the build to one platform (default: all)"
+        type: choice
+        default: all
+        options:
+          - all
+          - ubuntu-22.04
+          - macos-13
+          - windows-latest
 
 permissions:
   contents: write
@@ -22,14 +31,25 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.m.outputs.matrix }}
+    steps:
+      - id: m
+        run: |
+          only="${{ github.event.inputs.only || 'all' }}"
+          if [ "$only" = "all" ]; then
+            echo 'matrix={"platform":["ubuntu-22.04","macos-13","windows-latest"]}' >> "$GITHUB_OUTPUT"
+          else
+            echo "matrix={\"platform\":[\"$only\"]}" >> "$GITHUB_OUTPUT"
+          fi
+
   build:
+    needs: setup
     strategy:
       fail-fast: false
-      matrix:
-        include:
-          - platform: ubuntu-22.04   # Linux .deb / .rpm / .AppImage
-          - platform: macos-13       # macOS .dmg (x86_64; runs on Apple Silicon via Rosetta)
-          - platform: windows-latest # Windows .msi / NSIS .exe
+      matrix: ${{ fromJson(needs.setup.outputs.matrix) }}
     runs-on: ${{ matrix.platform }}
     timeout-minutes: 45
     steps:
