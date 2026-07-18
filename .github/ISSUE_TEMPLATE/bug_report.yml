@@ -50,7 +50,7 @@ body:
     attributes:
       label: Run Log output
       description: Copy the contents of the **Run Log** tab (or the terminal, for the web app). This is the single most useful thing for diagnosis.
-      render: text
+      render: shell
   - type: checkboxes
     id: checks
     attributes:
