@@ -1,0 +1,2 @@
+# Shell scripts must stay LF so they run on Linux/macOS/Termux.
+*.sh text eol=lf
