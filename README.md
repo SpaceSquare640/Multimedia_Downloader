@@ -108,6 +108,22 @@ operation at a time, like V3.0's `web_app.py`); for production put it behind a
 streaming-friendly WSGI worker, e.g. `gunicorn -k gthread -w 1 --threads 8
 web_app:app`, and add your own auth if exposing it beyond localhost.
 
+### Run on Android (Termux)
+
+The desktop app can't run on Android, but the Python engine can — via
+[Termux](https://termux.dev). Use it from the terminal (CLI) or as the web UI
+in your phone's browser:
+
+```bash
+pkg install -y git && git clone https://github.com/SpaceSquare640/Multimedia_Downloader.git
+cd Multimedia_Downloader
+bash termux/run-cli.sh download "https://youtu.be/XXXX" -o ~/storage/downloads -f mp4   # CLI
+bash termux/run-web.sh                                                                  # web UI
+```
+
+Full walkthrough: [termux/README.md](termux/README.md). The CLI ([`cli.py`](cli.py))
+also runs on any desktop/server with Python + ffmpeg.
+
 ### Project layout
 
 ```
@@ -117,6 +133,8 @@ Version4.0/
 ├── engine/       Python engine: Downloader / Converter (yt-dlp + ffmpeg)
 ├── engine_sidecar.py   stdio IPC entrypoint spawned by the Rust shell
 ├── web_app.py    Flask + SSE backend for the standalone web app (V4.1)
+├── cli.py        terminal CLI over the engine (great for Termux / headless)
+├── termux/       Android (Termux) launchers + guide
 ├── ai/           OpenRouter client + multi-model planning pipeline
 ├── locales/      en.json / zh_tw.json / zh_cn.json
 ├── packaging/    PyInstaller spec + build script
@@ -223,6 +241,21 @@ HOST=0.0.0.0 PORT=8000 python web_app.py
 使用者模型（一次一個操作，同 V3.0 的 `web_app.py`）；正式部署請置於支援串流的
 WSGI worker 後（例如 `gunicorn -k gthread -w 1 --threads 8 web_app:app`），對外開放時請自行加上驗證。
 
+### 在 Android 上執行（Termux）
+
+桌面版無法在 Android 執行，但 Python 引擎可以——透過 [Termux](https://termux.dev)。
+可用終端機（CLI）或手機瀏覽器（Web 版）：
+
+```bash
+pkg install -y git && git clone https://github.com/SpaceSquare640/Multimedia_Downloader.git
+cd Multimedia_Downloader
+bash termux/run-cli.sh download "https://youtu.be/XXXX" -o ~/storage/downloads -f mp4   # CLI
+bash termux/run-web.sh                                                                  # Web 版
+```
+
+完整說明見 [termux/README.md](termux/README.md)。CLI（[`cli.py`](cli.py)）在任何有
+Python + ffmpeg 的桌面/伺服器也能用。
+
 ### Cookie 提示
 
 部分平台（抖音、私人 TikTok、私人 Instagram 等）必須帶上登入 Cookie 才能下載：
@@ -320,6 +353,21 @@ HOST=0.0.0.0 PORT=8000 python web_app.py
 默认 `./downloads`），可经 `/files/<文件名>` 取回——存放位置栏位留空即用它。采用单
 用户模型（一次一个操作，同 V3.0 的 `web_app.py`）；正式部署请置于支持流式的 WSGI
 worker 后（例如 `gunicorn -k gthread -w 1 --threads 8 web_app:app`），对外开放时请自行加上鉴权。
+
+### 在 Android 上运行（Termux）
+
+桌面版无法在 Android 运行，但 Python 引擎可以——通过 [Termux](https://termux.dev)。
+可用终端（CLI）或手机浏览器（Web 版）：
+
+```bash
+pkg install -y git && git clone https://github.com/SpaceSquare640/Multimedia_Downloader.git
+cd Multimedia_Downloader
+bash termux/run-cli.sh download "https://youtu.be/XXXX" -o ~/storage/downloads -f mp4   # CLI
+bash termux/run-web.sh                                                                  # Web 版
+```
+
+完整说明见 [termux/README.md](termux/README.md)。CLI（[`cli.py`](cli.py)）在任何有
+Python + ffmpeg 的桌面/服务器也能用。
 
 ### Cookie 提示
 
