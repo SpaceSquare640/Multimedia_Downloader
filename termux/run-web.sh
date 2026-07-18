@@ -10,6 +10,9 @@ here="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$here"
 
 if command -v pkg >/dev/null 2>&1; then          # running under Termux
+  # Termux has no partial upgrades: a full upgrade must run BEFORE installing,
+  # or new packages (ffmpeg/libplacebo) fail to link against the old libc++.
+  yes | pkg upgrade -y || pkg upgrade -y
   pkg install -y python ffmpeg
 fi
 python -m pip install --upgrade --quiet flask yt-dlp

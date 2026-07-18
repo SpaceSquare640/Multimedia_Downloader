@@ -50,12 +50,30 @@ To reach it from another device on your LAN, start it with `HOST=0.0.0.0`
 
 ## Notes
 
+- **Always `pkg upgrade` before installing** — Termux does not support partial
+  upgrades. On a system with outdated packages, a fresh `pkg install ffmpeg`
+  fails to link (e.g. `CANNOT LINK EXECUTABLE ... cannot locate symbol ...
+  referenced by libplacebo.so`). The launcher scripts now run `pkg upgrade -y`
+  first; if you install manually, do the same.
 - **ffmpeg** comes from Termux's own package, so conversions and audio
   extraction work natively (arm64).
 - The **AI Assistant** works here too if you set an OpenRouter API key in the
   web UI's settings.
 - Keeping the download alive: Termux may sleep in the background — acquire a
   wake lock (Termux notification → "Acquire wakelock") for long batches.
+
+### Troubleshooting: `ffmpeg` failed to install / link
+
+If you already hit the `CANNOT LINK EXECUTABLE .../ffmpeg` error (ffmpeg left
+half-configured), repair it by completing the full upgrade, then reconfigure:
+
+```bash
+pkg upgrade -y            # brings libc++ and everything else up to date
+apt --fix-broken install  # finishes configuring ffmpeg
+ffmpeg -version           # should now print a version
+```
+
+Then re-run `bash termux/run-web.sh` (or `run-cli.sh`).
 
 ---
 
@@ -80,3 +98,7 @@ bash termux/run-web.sh           # 開啟顯示的網址（如 http://127.0.0.1:
 
 檔案預設存到 `~/storage/downloads`。長時間批次下載時，於 Termux 通知列
 「Acquire wakelock」避免系統休眠中斷。
+
+> ⚠️ **Termux 不支援部分升級**：腳本會先自動 `pkg upgrade`。若你手動裝且看到
+> `CANNOT LINK EXECUTABLE .../ffmpeg`（libplacebo.so 找不到符號），先跑
+> `pkg upgrade -y && apt --fix-broken install` 修好 ffmpeg，再重跑腳本。
