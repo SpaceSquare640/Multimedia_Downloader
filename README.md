@@ -70,7 +70,7 @@ the app.
 
 | Component | Notes |
 | --- | --- |
-| Windows 10/11, Linux, or macOS | Desktop app; Windows build verified, Linux/macOS packaging pending CI. |
+| Windows 10/11, Linux, or macOS | Desktop app; all three platforms built and published automatically by CI. |
 | WebView2 | Pre-installed on modern Windows; the installer will prompt if missing. |
 | OpenRouter API key | **Optional** — only needed to use the AI Assistant. Get one free at [openrouter.ai](https://openrouter.ai/keys). |
 
@@ -206,7 +206,7 @@ of service and the copyright of content owners.
 
 | 組件 | 說明 |
 | --- | --- |
-| Windows 10/11、Linux 或 macOS | 桌面 app；Windows 版已驗證，Linux/macOS 打包待對應 CI。 |
+| Windows 10/11、Linux 或 macOS | 桌面 app；三平台皆由 CI 自動建置並發布。 |
 | WebView2 | 現代 Windows 已預裝；安裝程式會在缺少時提示安裝。 |
 | OpenRouter API Key | **選用**——僅使用 AI 助手時需要。至 [openrouter.ai](https://openrouter.ai/keys) 免費取得。 |
 
@@ -319,7 +319,7 @@ Python + ffmpeg 的桌面/伺服器也能用。
 
 | 组件 | 说明 |
 | --- | --- |
-| Windows 10/11、Linux 或 macOS | 桌面 app；Windows 版已验证，Linux/macOS 打包待对应 CI。 |
+| Windows 10/11、Linux 或 macOS | 桌面 app；三平台均由 CI 自动构建并发布。 |
 | WebView2 | 现代 Windows 已预装；安装程序会在缺少时提示安装。 |
 | OpenRouter API Key | **可选**——仅使用 AI 助手时需要。到 [openrouter.ai](https://openrouter.ai/keys) 免费获取。 |
 
