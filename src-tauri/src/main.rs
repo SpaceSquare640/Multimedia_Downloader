@@ -128,55 +128,92 @@ fn streaming(app: &tauri::AppHandle, engine: &Engine, cmd: &str, args: Value)
     }
 }
 
+// NOTE ON ASYNC: these commands wrap `spawn_blocking` around the synchronous,
+// blocking sidecar I/O (`one_shot`/`streaming`). Tauri runs a plain `fn`
+// command directly on the main thread — the same thread that pumps the
+// window's OS message loop. A download/convert/AI-plan can block for seconds
+// to minutes, which starves that loop and makes Windows/macOS/Linux flag the
+// window as "Not Responding". Moving the blocking work onto a background
+// thread via `spawn_blocking` (and `.await`ing it from an `async fn` command)
+// keeps the main thread free the whole time. `Engine` state is fetched
+// *inside* the spawned closure (via `app.state::<Engine>()`) rather than
+// taken as a `State<'_, Engine>` parameter, since the closure must be
+// `'static` and `State` borrows from the call.
 #[tauri::command]
-fn get_formats(app: tauri::AppHandle) -> Result<Value, String> {
-    one_shot(&app, "formats", json!({}))
+async fn get_formats(app: tauri::AppHandle) -> Result<Value, String> {
+    tauri::async_runtime::spawn_blocking(move || one_shot(&app, "formats", json!({})))
+        .await
+        .map_err(|e| format!("background task failed: {e}"))?
 }
 
 #[tauri::command]
-fn get_locales(app: tauri::AppHandle) -> Result<Value, String> {
+async fn get_locales(app: tauri::AppHandle) -> Result<Value, String> {
     // Frontend expects the {code: name} map directly.
-    Ok(one_shot(&app, "locales", json!({}))?
-        .get("available")
-        .cloned()
-        .unwrap_or(Value::Null))
+    tauri::async_runtime::spawn_blocking(move || {
+        Ok(one_shot(&app, "locales", json!({}))?
+            .get("available")
+            .cloned()
+            .unwrap_or(Value::Null))
+    })
+    .await
+    .map_err(|e| format!("background task failed: {e}"))?
 }
 
 #[tauri::command]
-fn start_download(app: tauri::AppHandle, engine: State<Engine>, args: Value) -> Result<Value, String> {
-    // Map the frontend DownloadArgs into the sidecar's {urls, options} shape.
-    let options = json!({
-        "save_path": args.get("save_path"),
-        "mode": args.get("mode"),
-        "video_fmt": args.get("video_fmt"),
-        "audio_fmt": args.get("audio_fmt"),
-        "quality": args.get("quality"),
-        "browser": args.get("browser"),
-    });
-    streaming(&app, &engine, "download",
-        json!({ "urls": args.get("urls"), "options": options }))
+async fn start_download(app: tauri::AppHandle, args: Value) -> Result<Value, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let engine = app.state::<Engine>();
+        // Map the frontend DownloadArgs into the sidecar's {urls, options} shape.
+        let options = json!({
+            "save_path": args.get("save_path"),
+            "mode": args.get("mode"),
+            "video_fmt": args.get("video_fmt"),
+            "audio_fmt": args.get("audio_fmt"),
+            "quality": args.get("quality"),
+            "browser": args.get("browser"),
+        });
+        streaming(&app, &engine, "download",
+            json!({ "urls": args.get("urls"), "options": options }))
+    })
+    .await
+    .map_err(|e| format!("background task failed: {e}"))?
 }
 
 #[tauri::command]
-fn start_convert(app: tauri::AppHandle, engine: State<Engine>, args: Value) -> Result<Value, String> {
-    streaming(&app, &engine, "convert", json!({
-        "files": args.get("files"),
-        "dst_fmt": args.get("dst_fmt"),
-        "save_path": args.get("save_path"),
-    }))
+async fn start_convert(app: tauri::AppHandle, args: Value) -> Result<Value, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let engine = app.state::<Engine>();
+        streaming(&app, &engine, "convert", json!({
+            "files": args.get("files"),
+            "dst_fmt": args.get("dst_fmt"),
+            "save_path": args.get("save_path"),
+        }))
+    })
+    .await
+    .map_err(|e| format!("background task failed: {e}"))?
 }
 
 #[tauri::command]
-fn run_queue(app: tauri::AppHandle, engine: State<Engine>, args: Value) -> Result<Value, String> {
-    streaming(&app, &engine, "run_queue", args)
+async fn run_queue(app: tauri::AppHandle, args: Value) -> Result<Value, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let engine = app.state::<Engine>();
+        streaming(&app, &engine, "run_queue", args)
+    })
+    .await
+    .map_err(|e| format!("background task failed: {e}"))?
 }
 
 #[tauri::command]
-fn ai_plan(app: tauri::AppHandle, engine: State<Engine>, args: Value) -> Result<Value, String> {
+async fn ai_plan(app: tauri::AppHandle, args: Value) -> Result<Value, String> {
     // args is already {api_key, prompt, context} — passes straight through to
     // the sidecar's ai_plan command. NEVER executes anything (see D4); the
     // frontend calls run_queue separately, only after the user confirms.
-    streaming(&app, &engine, "ai_plan", args)
+    tauri::async_runtime::spawn_blocking(move || {
+        let engine = app.state::<Engine>();
+        streaming(&app, &engine, "ai_plan", args)
+    })
+    .await
+    .map_err(|e| format!("background task failed: {e}"))?
 }
 
 #[tauri::command]

@@ -6,6 +6,18 @@
 
 ## English
 
+### [4.1.1] — 2026-07-22
+
+#### Fixed
+- **Desktop app freezing / "Not Responding"** — the download, convert, batch
+  queue, and AI-plan commands ran synchronously on the main UI thread (Tauri
+  runs non-`async` commands there), so any operation lasting more than a few
+  seconds starved the window's message loop and triggered the OS's "Not
+  Responding" state. These commands now run on a background thread
+  (`tauri::async_runtime::spawn_blocking`), keeping the window responsive for
+  the whole operation. As a side effect, the **Stop button** now reacts
+  immediately during long operations instead of queuing behind them.
+
 ### [4.1.0] — 2026-07-17
 
 #### Added
@@ -73,11 +85,21 @@
 ### [3.0.0] — 2026-05-27 and earlier
 
 See the V3.0 changelog for the full history up to the tkinter/Flask
-generation of the app: the [v3.0.0 CHANGELOG](https://github.com/SpaceSquare640/Multimedia_Downloader/blob/v3.0.0/CHANGELOG.md).
+generation of the app: `Version/Version3.0/CHANGELOG.md`.
 
 ---
 
 ## 繁體中文
+
+### [4.1.1] — 2026-07-22
+
+#### 修復
+- **桌面版容易凍結／「沒有回應」** — 下載、轉換、批次佇列、AI 規劃這幾個
+  指令原本同步跑在主 UI 執行緒上（Tauri 對非 async 指令就是這樣處理），只要
+  操作超過幾秒，視窗的訊息迴圈就會被卡住，觸發作業系統的「沒有回應」狀態。
+  現在這些指令改到背景執行緒執行（`tauri::async_runtime::spawn_blocking`），
+  整個操作期間視窗都能保持回應。附帶效果：長時間操作中**「停止」按鈕**現在
+  會立即反應，不會再排在後面等。
 
 ### [4.1.0] — 2026-07-17
 
@@ -136,11 +158,21 @@ generation of the app: the [v3.0.0 CHANGELOG](https://github.com/SpaceSquare640/
 ### [3.0.0] — 2026-05-27 及更早
 
 tkinter/Flask 世代的完整變更歷程見 V3.0 changelog：
-the [v3.0.0 CHANGELOG](https://github.com/SpaceSquare640/Multimedia_Downloader/blob/v3.0.0/CHANGELOG.md)。
+`Version/Version3.0/CHANGELOG.md`。
 
 ---
 
 ## 简体中文
+
+### [4.1.1] — 2026-07-22
+
+#### 修复
+- **桌面版容易冻结／「未响应」** — 下载、转换、批次队列、AI 规划这几个指令
+  原本同步运行在主 UI 线程上（Tauri 对非 async 指令就是这样处理），只要操作
+  超过几秒，窗口的消息循环就会被卡住，触发操作系统的「未响应」状态。现在这
+  些指令改到后台线程执行（`tauri::async_runtime::spawn_blocking`），整个操
+  作期间窗口都能保持响应。附带效果：长时间操作中**「停止」按钮**现在会立即
+  响应，不会再排在后面等。
 
 ### [4.1.0] — 2026-07-17
 
@@ -199,4 +231,4 @@ the [v3.0.0 CHANGELOG](https://github.com/SpaceSquare640/Multimedia_Downloader/b
 ### [3.0.0] — 2026-05-27 及更早
 
 tkinter/Flask 世代的完整变更历程见 V3.0 changelog：
-the [v3.0.0 CHANGELOG](https://github.com/SpaceSquare640/Multimedia_Downloader/blob/v3.0.0/CHANGELOG.md)。
+`Version/Version3.0/CHANGELOG.md`。
