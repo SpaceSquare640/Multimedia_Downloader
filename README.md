@@ -1,4 +1,4 @@
-# Multimedia Downloader — V4.1.1
+# Multimedia Downloader — V4.2.0
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Latest release](https://img.shields.io/github/v/release/SpaceSquare640/Multimedia_Downloader?sort=semver)](https://github.com/SpaceSquare640/Multimedia_Downloader/releases/latest)
