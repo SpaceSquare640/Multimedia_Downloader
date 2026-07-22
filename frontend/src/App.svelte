@@ -12,9 +12,20 @@
   import ConvertTab from "./tabs/ConvertTab.svelte";
   import LogTab from "./tabs/LogTab.svelte";
   import AiPanel from "./ai/AiPanel.svelte";
+  import ManualPanel from "./components/ManualPanel.svelte";
 
   let active = $state<TabId>("video");
   let showAi = $state(false);
+  let showManual = $state(false);
+
+  function toggleAi() {
+    showAi = !showAi;
+    if (showAi) showManual = false;
+  }
+  function toggleManual() {
+    showManual = !showManual;
+    if (showManual) showAi = false;
+  }
   let formats = $state<Formats | null>(null);
   let langNames = $state<Record<string, string>>({});
 
@@ -42,7 +53,7 @@
     const onKey = (ev: KeyboardEvent) => {
       if ((ev.ctrlKey || ev.metaKey) && ev.key.toLowerCase() === "k") {
         ev.preventDefault();
-        showAi = !showAi;
+        toggleAi();
       }
     };
     window.addEventListener("keydown", onKey);
@@ -54,7 +65,7 @@
 </script>
 
 <div class="flex min-h-dvh flex-col">
-  <Header {langNames} onToggleAi={() => (showAi = !showAi)} />
+  <Header {langNames} onToggleAi={toggleAi} onToggleManual={toggleManual} />
 
   {#if IS_MOCK}
     <div class="bg-amber-100 py-1 text-center text-[11px] text-amber-800 dark:bg-amber-950/60 dark:text-amber-400">
@@ -78,13 +89,13 @@
   </main>
 
   <!-- Mobile FAB for the AI assistant (header button is lg+ only) -->
-  {#if !showAi}
+  {#if !showAi && !showManual}
     <button
       class="fixed right-4 bottom-20 z-30 flex size-14 items-center justify-center rounded-full
              bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-lg
              shadow-indigo-500/30 transition-transform active:scale-90 lg:hidden"
       style="margin-bottom: env(safe-area-inset-bottom)"
-      onclick={() => (showAi = true)}
+      onclick={toggleAi}
       aria-label={tr("ai_assistant")}
     >
       <Sparkles class="size-6" aria-hidden="true" />
@@ -93,6 +104,10 @@
 
   {#if showAi}
     <AiPanel onclose={() => (showAi = false)} />
+  {/if}
+
+  {#if showManual}
+    <ManualPanel onclose={() => (showManual = false)} />
   {/if}
 
   <Toasts />

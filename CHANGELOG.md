@@ -6,6 +6,16 @@
 
 ## English
 
+### [4.2.0] — 2026-07-23
+
+#### Added
+- **In-app User Manual** — a new panel (book icon in the header, or accessible
+  any time alongside the AI Assistant) with a quick reference for downloading,
+  converting, cookie-gated sites, the Run Log, the AI Assistant, and language/
+  theme switching, plus links to the full Wiki and issue tracker. Available in
+  all three languages and reacts instantly to the language switcher, just like
+  the rest of the UI.
+
 ### [4.1.1] — 2026-07-22
 
 #### Fixed
@@ -91,6 +101,14 @@ generation of the app: `Version/Version3.0/CHANGELOG.md`.
 
 ## 繁體中文
 
+### [4.2.0] — 2026-07-23
+
+#### 新增
+- **App 內建使用手冊** — 新增一個面板（點頁首書本圖示開啟，跟 AI 助手一樣隨
+  時可用），快速說明下載、轉換、需登入平台、運行日誌、AI 助手、語言/主題切
+  換等用法，並附上完整 Wiki 與 Issue 回報連結的網址。支援三語，語言切換時內
+  容會即時跟著變。
+
 ### [4.1.1] — 2026-07-22
 
 #### 修復
@@ -163,6 +181,14 @@ tkinter/Flask 世代的完整變更歷程見 V3.0 changelog：
 ---
 
 ## 简体中文
+
+### [4.2.0] — 2026-07-23
+
+#### 新增
+- **App 内置使用手册** — 新增一个面板（点页首书本图标打开，跟 AI 助手一样随
+  时可用），快速说明下载、转换、需登录平台、运行日志、AI 助手、语言/主题切
+  换等用法，并附上完整 Wiki 与 Issue 反馈链接的网址。支持三语，切换语言时内
+  容会即时跟着变。
 
 ### [4.1.1] — 2026-07-22
 

@@ -167,5 +167,21 @@
   "log_autoscroll": "Auto-scroll",
   "log_level_all": "All levels",
   "adv_options": "Advanced (ffmpeg)",
-  "lbl_bitrate": "Bitrate:"
+  "lbl_bitrate": "Bitrate:",
+  "manual_title": "User Manual",
+  "manual_intro": "A quick reference for the basics. For the full guide, FAQ, and troubleshooting, see the online Wiki (link at the bottom).",
+  "manual_sec_download_title": "⬇️  Downloading video or audio",
+  "manual_sec_download_body": "1. Open the Video or Music tab.\n2. Paste one or more URLs, one per line — batches are supported.\n3. Pick a format and quality.\n4. Choose a save location.\n5. Click Start Download.\n\nSupports 500+ sites via yt-dlp: YouTube, Facebook, Instagram, TikTok, BiliBili, Twitter, SoundCloud, Twitch, Vimeo, and more.",
+  "manual_sec_convert_title": "🔄  Converting files",
+  "manual_sec_convert_body": "1. Open the Convert tab.\n2. Add one or more local files.\n3. Choose the target format.\n4. Choose a save location.\n5. Click Start Convert.\n\nConversion runs on the bundled ffmpeg — no separate install needed.",
+  "manual_sec_cookies_title": "🍪  Cookie-gated platforms",
+  "manual_sec_cookies_body": "Some platforms (Douyin, private TikTok/Instagram, etc.) require a login cookie to download.\n\n• Easiest: pick the browser you're logged into from the dropdown — it's read automatically.\n• Manual: export cookies.txt with a browser extension (e.g. \"Get cookies.txt LOCALLY\") and point the app at the file.",
+  "manual_sec_log_title": "📄  Run Log",
+  "manual_sec_log_body": "Shows every download/convert event as it happens, with level filters (info/ok/warn/err). Turn on auto-save to write the log to a .txt file after each session.",
+  "manual_sec_ai_title": "✨  AI Assistant",
+  "manual_sec_ai_body": "Click the AI Assistant button (or press Ctrl/Cmd+K) and describe a task in plain language, e.g. \"convert every .mkv in this folder to mp4.\"\n\nYou'll need your own free OpenRouter API key (stored only on this device). The assistant drafts a plan and shows it to you — nothing runs until you click Confirm.",
+  "manual_sec_settings_title": "🌐  Language & appearance",
+  "manual_sec_settings_body": "Switch the interface language from the dropdown in the header — English, 繁體中文, or 简体中文. Click the sun/moon icon to cycle Light → Dark → System theme.",
+  "manual_sec_help_title": "❓  More help",
+  "manual_sec_help_body": "Full documentation, FAQ, and known issues:\ngithub.com/SpaceSquare640/Multimedia_Downloader/wiki\n\nFound a bug? Open an issue:\ngithub.com/SpaceSquare640/Multimedia_Downloader/issues"
 }

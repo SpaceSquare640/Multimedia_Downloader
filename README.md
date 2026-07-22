@@ -33,6 +33,8 @@ built with [Tauri](https://tauri.app), and as a deployable web app.
   `cookies.txt` for Douyin / Instagram / login-gated platforms.
 - **Batch queue** — download or convert many items in one go, with live
   per-item progress and a run log.
+- **Built-in User Manual** — a quick reference panel right in the app (header
+  book icon), available in all three languages.
 
 > [!NOTE]
 > Primarily a desktop app; **V4.1** adds a real, network-deployable web version
@@ -174,6 +176,7 @@ of service and the copyright of content owners.
 - **Cookie 支援** — 直接讀取已登入瀏覽器，或匯入 `cookies.txt` 處理抖音、
   Instagram 等需登入平台。
 - **批次佇列** — 一次下載或轉換多個項目，即時逐項進度與運行日誌。
+- **App 內建使用手冊** — 頁首書本圖示點開即可查看，支援三語。
 
 > [!NOTE]
 > 以桌面 app 為主；**V4.1** 新增真正可部署的網頁版（見下方「以網頁版執
@@ -287,6 +290,7 @@ Python + ffmpeg 的桌面/伺服器也能用。
 - **Cookie 支持** — 直接读取已登录浏览器，或导入 `cookies.txt` 处理抖音、
   Instagram 等需登录平台。
 - **批次队列** — 一次下载或转换多个项目，实时逐项进度与运行日志。
+- **App 内置使用手册** — 页首书本图标点开即可查看，支持三语。
 
 > [!NOTE]
 > 以桌面 app 为主；**V4.1** 新增真正可部署的网页版（见下方「以网页版运

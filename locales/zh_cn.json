@@ -167,5 +167,21 @@
   "log_autoscroll": "自动滚动",
   "log_level_all": "全部级别",
   "adv_options": "高级（ffmpeg）",
-  "lbl_bitrate": "比特率："
+  "lbl_bitrate": "比特率：",
+  "manual_title": "使用手册",
+  "manual_intro": "快速上手指南。完整说明、常见问题与疑难排解请见在线 Wiki（链接在最下方）。",
+  "manual_sec_download_title": "⬇️  下载视频或音频",
+  "manual_sec_download_body": "1. 打开「视频」或「音乐」标签页。\n2. 粘贴一个或多个网址，每行一个——支持批量处理。\n3. 选择格式与画质。\n4. 选择存放位置。\n5. 点击「开始下载」。\n\n通过 yt-dlp 支持 500+ 平台：YouTube、Facebook、Instagram、TikTok、BiliBili、Twitter、SoundCloud、Twitch、Vimeo 等。",
+  "manual_sec_convert_title": "🔄  转换文件",
+  "manual_sec_convert_body": "1. 打开「转换」标签页。\n2. 添加一个或多个本地文件。\n3. 选择目标格式。\n4. 选择存放位置。\n5. 点击「开始转换」。\n\n转换使用内置的 ffmpeg——免另外安装。",
+  "manual_sec_cookies_title": "🍪  需登录的平台",
+  "manual_sec_cookies_body": "部分平台（抖音、私人 TikTok/Instagram 等）下载时需要登录 Cookie。\n\n• 最简单：从下拉菜单选择你已登录的浏览器——会自动读取。\n• 手动：用浏览器扩展（例如「Get cookies.txt LOCALLY」）导出 cookies.txt，再指定给 app。",
+  "manual_sec_log_title": "📄  运行日志",
+  "manual_sec_log_body": "实时显示每一条下载/转换事件，可按级别筛选（info/ok/warn/err）。开启自动保存后，每次作业结束会将日志存成 .txt 文件。",
+  "manual_sec_ai_title": "✨  AI 助手",
+  "manual_sec_ai_body": "点击 AI 助手按钮（或按 Ctrl/Cmd+K），用自然语言描述任务，例如「把这个文件夹内所有 .mkv 转成 mp4」。\n\n需要你自己的免费 OpenRouter API Key（仅保存于本机）。助手会生成计划并显示给你——按下「确认」前不会执行任何操作。",
+  "manual_sec_settings_title": "🌐  语言与外观",
+  "manual_sec_settings_body": "在页首的下拉菜单切换界面语言——English、繁體中文、简体中文。点击太阳/月亮图标可依序切换 浅色 → 深色 → 跟随系统 主题。",
+  "manual_sec_help_title": "❓  更多帮助",
+  "manual_sec_help_body": "完整说明文档、常见问题、已知限制：\ngithub.com/SpaceSquare640/Multimedia_Downloader/wiki\n\n发现问题？开一个 Issue：\ngithub.com/SpaceSquare640/Multimedia_Downloader/issues"
 }

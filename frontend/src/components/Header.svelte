@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Download, Sun, Moon, Monitor, Sparkles } from "lucide-svelte";
+  import { Download, Sun, Moon, Monitor, Sparkles, BookOpen } from "lucide-svelte";
   import { lang, t } from "../store";
   import { theme, cycleTheme } from "../lib/theme";
   import { SUPPORTED, type Lang } from "../i18n";
@@ -7,7 +7,8 @@
   let {
     langNames,
     onToggleAi,
-  }: { langNames: Record<string, string>; onToggleAi: () => void } = $props();
+    onToggleManual,
+  }: { langNames: Record<string, string>; onToggleAi: () => void; onToggleManual: () => void } = $props();
 
   const tr = $derived($t);
   // Icon reflects the CURRENT mode; clicking cycles light → dark → system.
@@ -48,6 +49,18 @@
           <option value={code}>{langNames[code] ?? code}</option>
         {/each}
       </select>
+
+      <!-- User Manual -->
+      <button
+        class="grid size-9 place-items-center rounded-lg border border-zinc-300 bg-white
+               text-zinc-600 hover:bg-zinc-100
+               dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800"
+        onclick={onToggleManual}
+        aria-label={tr("manual_title")}
+        title={tr("manual_title")}
+      >
+        <BookOpen class="size-4" aria-hidden="true" />
+      </button>
 
       <!-- Theme cycle -->
       <button
