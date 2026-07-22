@@ -10,7 +10,6 @@
     "dev": "tauri dev",
     "build": "tauri build",
     "sidecar": "python -m PyInstaller packaging/engine_sidecar.spec --noconfirm --distpath packaging/dist --workpath packaging/build",
-    "package": "powershell -ExecutionPolicy Bypass -File packaging/build-desktop.ps1",
     "build:frontend:web": "npm --prefix frontend run build:web",
     "web": "python web_app.py"
   },

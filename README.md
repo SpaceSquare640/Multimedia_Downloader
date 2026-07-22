@@ -83,8 +83,12 @@ git clone https://github.com/SpaceSquare640/Multimedia_Downloader.git
 cd Multimedia_Downloader
 npm install                 # installs the Tauri CLI at the project root
 npm run tauri dev           # compile + run in dev mode (needs Python 3.8+, Rust, Node)
-npm run package             # build installers -> Packaged/Version4.0_Packaged
+npm run tauri build         # build an installer locally, if you want one without waiting for CI
 ```
+
+Official installers for every push tag are built and published automatically
+by GitHub Actions (see `.github/workflows/release.yml`) — you don't need to
+build locally to cut a release, just push a `vX.Y.Z` tag.
 
 Run the Python test suite: `python -m unittest discover -s tests` (63 tests).
 
@@ -129,7 +133,7 @@ also runs on any desktop/server with Python + ffmpeg.
 ### Project layout
 
 ```
-Version4.0/
+Source_Code/
 ├── src-tauri/    Tauri shell (Rust): window, sidecar management
 ├── frontend/     Web UI (Svelte + Vite + TS + Tailwind)
 ├── engine/       Python engine: Downloader / Converter (yt-dlp + ffmpeg)
@@ -139,7 +143,7 @@ Version4.0/
 ├── termux/       Android (Termux) launchers + guide
 ├── ai/           OpenRouter client + multi-model planning pipeline
 ├── locales/      en.json / zh_tw.json / zh_cn.json
-├── packaging/    PyInstaller spec + build script
+├── packaging/    PyInstaller spec (used by CI to build the sidecar)
 └── tests/        Unit tests
 ```
 
@@ -220,8 +224,11 @@ git clone https://github.com/SpaceSquare640/Multimedia_Downloader.git
 cd Multimedia_Downloader
 npm install                 # 於專案根目錄安裝 Tauri CLI
 npm run tauri dev           # 編譯並以開發模式執行（需 Python 3.8+、Rust、Node）
-npm run package             # 建置安裝檔 → Packaged/Version4.0_Packaged
+npm run tauri build         # 想在本機直接建置安裝檔（不等 CI）時使用
 ```
+
+每次推送 `vX.Y.Z` tag，GitHub Actions 會自動建置並發布各平台正式安裝檔（見
+`.github/workflows/release.yml`）——正式發布不需要本機建置，推 tag 即可。
 
 執行 Python 測試套件：`python -m unittest discover -s tests`（63 項測試）。
 
@@ -334,8 +341,11 @@ git clone https://github.com/SpaceSquare640/Multimedia_Downloader.git
 cd Multimedia_Downloader
 npm install                 # 在项目根目录安装 Tauri CLI
 npm run tauri dev           # 编译并以开发模式运行（需 Python 3.8+、Rust、Node）
-npm run package             # 构建安装包 → Packaged/Version4.0_Packaged
+npm run tauri build         # 想在本机直接构建安装包（不等 CI）时使用
 ```
+
+每次推送 `vX.Y.Z` tag，GitHub Actions 会自动构建并发布各平台正式安装包（见
+`.github/workflows/release.yml`）——正式发布不需要本机构建，推 tag 即可。
 
 运行 Python 测试套件：`python -m unittest discover -s tests`（63 项测试）。
 
