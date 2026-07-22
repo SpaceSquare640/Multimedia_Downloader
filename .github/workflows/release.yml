@@ -3,6 +3,15 @@ name: Release build
 # Builds the desktop installers for Linux, macOS, and Windows and uploads them
 # to the matching GitHub Release. Triggers on a version tag push (v*), or run
 # manually against an existing tag via the "Run workflow" button.
+#
+# To ship a new version: bump the version numbers + CHANGELOG on `main`, then
+# create and push a `vX.Y.Z` tag (`git tag vX.Y.Z && git push origin vX.Y.Z`).
+# That's it — no local build required. This workflow creates the GitHub
+# Release automatically if one doesn't already exist for the tag (with
+# GitHub's auto-generated notes as a placeholder) and uploads all 3
+# platforms' installers to it. Polished tri-lingual release notes can be
+# added afterwards with `gh release edit vX.Y.Z --notes-file ...` — that's
+# independent of the build/upload and can happen before or after.
 
 on:
   push:
@@ -35,7 +44,11 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.m.outputs.matrix }}
+      tag: ${{ steps.tag.outputs.tag }}
     steps:
+      - id: tag
+        run: echo "tag=${{ github.event.inputs.tag || github.ref_name }}" >> "$GITHUB_OUTPUT"
+
       - id: m
         run: |
           only="${{ github.event.inputs.only || 'all' }}"
@@ -43,6 +56,25 @@ jobs:
             echo 'matrix={"platform":["ubuntu-22.04","macos-14","windows-latest"]}' >> "$GITHUB_OUTPUT"
           else
             echo "matrix={\"platform\":[\"$only\"]}" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Runs BEFORE any platform build starts, so there's no race between the
+      # 3 parallel jobs over who creates the release. If a release for this
+      # tag already exists (e.g. hand-crafted tri-lingual notes via
+      # `gh release create`/`gh release edit`), this is a no-op and those
+      # notes are left untouched — only missing releases get auto-generated
+      # notes as a placeholder.
+      - name: Ensure a GitHub Release exists for this tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag="${{ steps.tag.outputs.tag }}"
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release $tag already exists — leaving it as-is."
+          else
+            echo "No release for $tag yet — creating one (edit notes later with"
+            echo "'gh release edit $tag --notes-file ...' for polished tri-lingual notes)."
+            gh release create "$tag" --repo "$GITHUB_REPOSITORY" --title "$tag" --generate-notes
           fi
 
   build:
@@ -134,7 +166,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          tag="${{ github.event.inputs.tag || github.ref_name }}"
+          tag="${{ needs.setup.outputs.tag }}"
           echo "Uploading bundles to release $tag"
           find src-tauri/target/release/bundle -type f \
             \( -name '*.deb' -o -name '*.rpm' -o -name '*.AppImage' \
