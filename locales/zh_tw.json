@@ -183,5 +183,7 @@
   "manual_sec_settings_title": "🌐  語言與外觀",
   "manual_sec_settings_body": "在頁首的下拉選單切換介面語言——English、繁體中文、简体中文。點擊太陽/月亮圖示可依序切換 亮色 → 暗色 → 跟隨系統 主題。",
   "manual_sec_help_title": "❓  更多協助",
-  "manual_sec_help_body": "完整說明文件、常見問題、已知限制：\ngithub.com/SpaceSquare640/Multimedia_Downloader/wiki\n\n發現問題？開一個 Issue：\ngithub.com/SpaceSquare640/Multimedia_Downloader/issues"
+  "manual_sec_help_body": "完整說明文件、常見問題、已知限制：\ngithub.com/SpaceSquare640/Multimedia_Downloader/wiki\n\n發現問題？開一個 Issue：\ngithub.com/SpaceSquare640/Multimedia_Downloader/issues",
+  "log_clear_confirm_title": "要清空日誌嗎？",
+  "log_clear_confirm_body": "會移除目前顯示的所有紀錄，且無法復原（如果需要保留，請先匯出）。"
 }

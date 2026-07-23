@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Download, Sun, Moon, Monitor, Sparkles, BookOpen } from "lucide-svelte";
+  import { Download, Sun, Moon, Monitor, Sparkles, BookOpen, Languages } from "lucide-svelte";
   import { lang, t } from "../store";
   import { theme, cycleTheme } from "../lib/theme";
   import { SUPPORTED, type Lang } from "../i18n";
@@ -38,17 +38,23 @@
 
     <div class="ms-auto flex items-center gap-1.5">
       <!-- Language -->
-      <select
-        aria-label={tr("language")}
-        class="h-9 rounded-lg border border-zinc-300 bg-white px-2 text-xs
-               dark:border-zinc-700 dark:bg-zinc-900"
-        value={$lang}
-        onchange={(e) => lang.set((e.currentTarget as HTMLSelectElement).value as Lang)}
-      >
-        {#each SUPPORTED as code}
-          <option value={code}>{langNames[code] ?? code}</option>
-        {/each}
-      </select>
+      <div class="relative">
+        <Languages
+          class="pointer-events-none absolute top-1/2 left-2 size-3.5 -translate-y-1/2 text-zinc-400"
+          aria-hidden="true"
+        />
+        <select
+          aria-label={tr("language")}
+          class="h-9 rounded-lg border border-zinc-300 bg-white ps-7 pe-2 text-xs
+                 dark:border-zinc-700 dark:bg-zinc-900"
+          value={$lang}
+          onchange={(e) => lang.set((e.currentTarget as HTMLSelectElement).value as Lang)}
+        >
+          {#each SUPPORTED as code}
+            <option value={code}>{langNames[code] ?? code}</option>
+          {/each}
+        </select>
+      </div>
 
       <!-- User Manual -->
       <button

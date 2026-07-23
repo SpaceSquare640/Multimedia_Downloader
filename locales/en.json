@@ -183,5 +183,7 @@
   "manual_sec_settings_title": "🌐  Language & appearance",
   "manual_sec_settings_body": "Switch the interface language from the dropdown in the header — English, 繁體中文, or 简体中文. Click the sun/moon icon to cycle Light → Dark → System theme.",
   "manual_sec_help_title": "❓  More help",
-  "manual_sec_help_body": "Full documentation, FAQ, and known issues:\ngithub.com/SpaceSquare640/Multimedia_Downloader/wiki\n\nFound a bug? Open an issue:\ngithub.com/SpaceSquare640/Multimedia_Downloader/issues"
+  "manual_sec_help_body": "Full documentation, FAQ, and known issues:\ngithub.com/SpaceSquare640/Multimedia_Downloader/wiki\n\nFound a bug? Open an issue:\ngithub.com/SpaceSquare640/Multimedia_Downloader/issues",
+  "log_clear_confirm_title": "Clear the log?",
+  "log_clear_confirm_body": "This removes every line currently shown. It can't be undone (export it first if you need a copy)."
 }

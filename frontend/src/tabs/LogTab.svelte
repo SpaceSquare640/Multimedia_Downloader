@@ -8,6 +8,21 @@
   let level = $state<"all" | "info" | "ok" | "warn" | "err">("all");
   let autoScroll = $state(true);
   let consoleEl = $state<HTMLDivElement | null>(null);
+  let showClearConfirm = $state(false);
+  let cancelBtnEl = $state<HTMLButtonElement | null>(null);
+
+  // Chrome suppresses the native `autofocus` attribute once the user has
+  // already interacted with the page (which is always true here, since this
+  // dialog only opens in response to a click) -- so initial focus has to be
+  // moved imperatively instead.
+  $effect(() => {
+    if (showClearConfirm) cancelBtnEl?.focus();
+  });
+
+  function confirmClear() {
+    clearLogs();
+    showClearConfirm = false;
+  }
 
   const filtered = $derived(
     $logs.filter(
@@ -78,7 +93,7 @@
     <button class={btnCls} onclick={exportLog} disabled={$logs.length === 0}>
       <FileDown class="size-3.5" aria-hidden="true" />{tr("log_export")}
     </button>
-    <button class={btnCls} onclick={clearLogs} disabled={$logs.length === 0}>
+    <button class={btnCls} onclick={() => (showClearConfirm = true)} disabled={$logs.length === 0}>
       <Trash2 class="size-3.5" aria-hidden="true" />{tr("btn_clear")}
     </button>
   </div>
@@ -101,3 +116,52 @@
     {/if}
   </div>
 </div>
+
+<svelte:window
+  onkeydown={(e) => {
+    if (e.key === "Escape" && showClearConfirm) showClearConfirm = false;
+  }}
+/>
+
+{#if showClearConfirm}
+  <!-- Backdrop and dialog are separate siblings (not nested) so clicking the
+       dialog itself never bubbles to the backdrop's dismiss handler. -->
+  <div
+    class="fixed inset-0 z-50 bg-black/45 backdrop-blur-[2px]"
+    onclick={() => (showClearConfirm = false)}
+    aria-hidden="true"
+  ></div>
+
+  <div
+    class="fixed inset-0 z-50 grid place-items-center p-4"
+    role="alertdialog"
+    aria-modal="true"
+    aria-labelledby="clear-log-confirm-title"
+  >
+    <div class="w-full max-w-xs rounded-xl border border-zinc-200 bg-white p-4 shadow-2xl dark:border-zinc-800 dark:bg-zinc-900">
+      <div class="flex items-start gap-3">
+        <div class="grid size-9 shrink-0 place-items-center rounded-full bg-red-50 text-red-500 dark:bg-red-950/50">
+          <Trash2 class="size-4.5" aria-hidden="true" />
+        </div>
+        <div class="min-w-0">
+          <h2 id="clear-log-confirm-title" class="text-sm font-semibold">{tr("log_clear_confirm_title")}</h2>
+          <p class="mt-1 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
+            {tr("log_clear_confirm_body")}
+          </p>
+        </div>
+      </div>
+      <div class="mt-4 flex justify-end gap-2">
+        <button
+          bind:this={cancelBtnEl}
+          class="h-9 rounded-lg border border-zinc-300 px-3 text-xs text-zinc-600
+                 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+          onclick={() => (showClearConfirm = false)}
+        >{tr("btn_cancel")}</button>
+        <button
+          class="h-9 rounded-lg bg-red-500 px-3 text-xs font-semibold text-white hover:bg-red-600"
+          onclick={confirmClear}
+        >{tr("btn_clear")}</button>
+      </div>
+    </div>
+  </div>
+{/if}
