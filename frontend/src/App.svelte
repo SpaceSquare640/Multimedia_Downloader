@@ -27,13 +27,18 @@
     if (showManual) showAi = false;
   }
   let formats = $state<Formats | null>(null);
-  let langNames = $state<Record<string, string>>({});
+  // Display names (English / 繁體中文 / 简体中文) are static, bundled at build
+  // time from the locale JSON's `_meta.name` — no need to round-trip through
+  // the engine sidecar just to fetch 3 strings that never change. (Previously
+  // fetched via `api.getLocales()`; an IPC/sidecar hiccup left this stuck as
+  // `{}` forever with no error surfaced, so the dropdown silently fell back
+  // to showing raw codes "en"/"zh_tw"/"zh_cn" — see GitHub issue #4.)
+  let langNames = $state<Record<string, string>>(Translator.available());
 
   const tr = $derived($t);
 
   onMount(() => {
     api.getFormats().then((f) => (formats = f));
-    api.getLocales().then((n) => (langNames = n));
 
     // Single global subscription: engine emits i18n KEYS; we translate here
     // with the language active at the moment the line arrives.
