@@ -1,0 +1,95 @@
+name: CI
+
+# Fast correctness gate that runs on every push/PR to main -- separate from
+# release.yml, which only builds/ships installers on a version tag and never
+# runs any of these checks. Catches regressions before they can reach a
+# tagged release.
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  python-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install engine dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install yt-dlp mutagen brotli certifi requests websockets
+
+      - name: Run unit tests
+        run: python -m unittest discover -s tests -v
+
+  frontend-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+
+      - name: Install frontend dependencies
+        run: npm install --no-audit --no-fund --prefix frontend
+
+      - name: svelte-check
+        run: npm run check --prefix frontend
+
+  rust-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+
+      - name: Cache Rust build
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: "./src-tauri -> target"
+
+      - name: Install Linux system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libgtk-3-dev \
+            librsvg2-dev \
+            libappindicator3-dev \
+            patchelf
+
+      # tauri-build's build.rs fails cargo check/clippy outright if the
+      # bundle.resources path in tauri.conf.json doesn't exist on disk, so the
+      # sidecar has to be built first even though we're not producing an
+      # installer here (matches the step in release.yml).
+      - name: Build Python engine sidecar (PyInstaller)
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller yt-dlp mutagen brotli certifi requests websockets
+          pyinstaller packaging/engine_sidecar.spec --noconfirm --distpath packaging/dist --workpath packaging/build
+
+      - name: cargo check
+        working-directory: src-tauri
+        run: cargo check --all-targets
+
+      - name: cargo clippy
+        working-directory: src-tauri
+        run: cargo clippy --all-targets -- -D warnings
