@@ -6,6 +6,25 @@
 
 ## English
 
+### [4.2.1] — 2026-07-23
+
+#### Fixed
+- **Language dropdown showing raw codes instead of names** (`en` / `zh_tw` /
+  `zh_cn` instead of "English" / "繁體中文" / "简体中文") — reported in
+  [#4](https://github.com/SpaceSquare640/Multimedia_Downloader/issues/4). The
+  display names were being fetched over an unnecessary round-trip to the
+  engine sidecar; if that round-trip ever hiccupped, the dropdown silently
+  fell back to raw codes with no visible error. Fixed by reading the names
+  directly from the locale files bundled at build time — zero backend
+  dependency, so this can no longer happen.
+
+#### Changed
+- Removed the local-only `packaging/build-desktop.ps1` script and the
+  `package` npm script that called it — CI's release pipeline has its own
+  equivalent steps and never used this file, so it was pure duplication. Use
+  `npm run tauri build` for an ad-hoc local installer, or push a `vX.Y.Z` tag
+  to have CI build and publish one for every platform.
+
 ### [4.2.0] — 2026-07-23
 
 #### Added
@@ -101,6 +120,22 @@ generation of the app: `Version/Version3.0/CHANGELOG.md`.
 
 ## 繁體中文
 
+### [4.2.1] — 2026-07-23
+
+#### 修復
+- **語言下拉選單顯示原始代碼而非名稱**（顯示 `en`／`zh_tw`／`zh_cn` 而非
+  「English」／「繁體中文」／「简体中文」）——由
+  [#4](https://github.com/SpaceSquare640/Multimedia_Downloader/issues/4) 回報。
+  原因是顯示名稱要跑一趟引擎 sidecar 才能拿到，一旦這趟呼叫失敗，下拉選單
+  會悄悄退回顯示原始代碼、不會有任何錯誤提示。修法：改成直接從建置時期就
+  綁進 app 的語言檔讀取名稱——完全不依賴後端，不會再發生這個問題。
+
+#### 變更
+- 移除純本機專用的 `packaging/build-desktop.ps1` 腳本，以及呼叫它的
+  `package` npm script——CI 的發布流程有自己等效的步驟、從未用過這個檔案，
+  純屬重複。想在本機直接建置安裝檔可用 `npm run tauri build`；正式發布則
+  推送 `vX.Y.Z` tag 讓 CI 自動建置各平台並發布。
+
 ### [4.2.0] — 2026-07-23
 
 #### 新增
@@ -181,6 +216,22 @@ tkinter/Flask 世代的完整變更歷程見 V3.0 changelog：
 ---
 
 ## 简体中文
+
+### [4.2.1] — 2026-07-23
+
+#### 修复
+- **语言下拉菜单显示原始代码而非名称**（显示 `en`／`zh_tw`／`zh_cn` 而非
+  「English」／「繁體中文」／「简体中文」）——由
+  [#4](https://github.com/SpaceSquare640/Multimedia_Downloader/issues/4) 反馈。
+  原因是显示名称要跑一趟引擎 sidecar 才能拿到，一旦这趟调用失败，下拉菜单
+  会悄悄退回显示原始代码、不会有任何错误提示。修复方式：改成直接从构建时
+  就绑进 app 的语言文件读取名称——完全不依赖后端，不会再发生这个问题。
+
+#### 变更
+- 移除纯本机专用的 `packaging/build-desktop.ps1` 脚本，以及调用它的
+  `package` npm script——CI 的发布流程有自己等效的步骤、从未用过这个文件，
+  纯属重复。想在本机直接构建安装包可用 `npm run tauri build`；正式发布则
+  推送 `vX.Y.Z` tag 让 CI 自动构建各平台并发布。
 
 ### [4.2.0] — 2026-07-23
 
