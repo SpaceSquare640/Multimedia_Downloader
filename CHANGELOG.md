@@ -2,6 +2,10 @@
 
 **Language / 語言 / 语言:** [English](#english) · [繁體中文](#繁體中文) · [简体中文](#简体中文)
 
+> Entries through v4.2.2 are tri-lingual. From the next release onward, new
+> entries are written in English only (repo documentation is English-only
+> going forward; the Wiki and the app's own UI remain tri-lingual).
+
 ---
 
 ## English
