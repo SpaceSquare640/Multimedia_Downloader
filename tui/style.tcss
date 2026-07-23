@@ -1,0 +1,93 @@
+/* Shared styling for the Multimedia Downloader TUI.
+   Accent picks up the desktop app's indigo/violet brand color. */
+
+Screen {
+    background: $surface;
+}
+
+.section-title {
+    text-style: bold;
+    margin-top: 1;
+    margin-bottom: 1;
+    color: $accent;
+}
+
+.field-row {
+    height: auto;
+    margin-bottom: 1;
+}
+
+.field-row Label {
+    margin-bottom: 1;
+}
+
+.field-row Select, .field-row Input {
+    width: 100%;
+}
+
+.actions-row {
+    height: 3;
+    margin-top: 1;
+    align: left middle;
+}
+
+.actions-row Button {
+    margin-right: 2;
+}
+
+#items-list {
+    height: auto;
+    max-height: 12;
+    border: round $panel;
+    margin-top: 1;
+}
+
+.status-line {
+    color: $text-muted;
+    margin-top: 1;
+}
+
+ProgressBar {
+    margin-top: 1;
+    width: 100%;
+}
+
+RichLog {
+    border: round $panel;
+    background: $surface;
+}
+
+.toolbar {
+    height: 3;
+    align: left middle;
+}
+
+.toolbar Input {
+    width: 1fr;
+    margin-right: 1;
+}
+
+.toolbar Select {
+    width: 20;
+    margin-right: 1;
+}
+
+.toolbar Button {
+    margin-right: 1;
+}
+
+ConfirmDialog {
+    align: center middle;
+}
+
+#confirm-box {
+    width: 50;
+    height: auto;
+    border: thick $accent;
+    background: $panel;
+    padding: 1 2;
+}
+
+#confirm-box .actions-row {
+    align: right middle;
+}

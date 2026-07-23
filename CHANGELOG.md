@@ -10,6 +10,21 @@
 
 ## English
 
+### [4.3.0] — 2026-07-23
+
+#### Added
+- **Interactive terminal UI** (`tui/`, run via `python -m tui`) — a full
+  keyboard-driven interface built with [Textual](https://textual.textualize.io),
+  with the same Download / Convert / Log tabs as the desktop app, driving the
+  same `engine/` package (no separate implementation of download/convert
+  logic). Supports batch downloads with live progress, batch conversion with
+  per-file status, cookie file/browser selection, a search/filter/export run
+  log, and a confirm-before-clear dialog. Language is fixed at launch via
+  `--lang` (like `cli.py`); light/dark is toggleable with `d`. New
+  `requirements-tui.txt` (`yt-dlp` + `textual`); 10 new headless tests in
+  `tests/test_tui.py` using Textual's `App.run_test()`/`Pilot`, wired into
+  `ci.yml`.
+
 ### [4.2.2] — 2026-07-23
 
 #### Added

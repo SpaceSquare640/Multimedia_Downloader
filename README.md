@@ -1,4 +1,4 @@
-# Multimedia Downloader — V4.2.2
+# Multimedia Downloader — V4.3.0
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Latest release](https://img.shields.io/github/v/release/SpaceSquare640/Multimedia_Downloader?sort=semver)](https://github.com/SpaceSquare640/Multimedia_Downloader/releases/latest)
@@ -130,6 +130,23 @@ bash termux/run-web.sh                                                          
 Full walkthrough: [termux/README.md](termux/README.md). The CLI ([`cli.py`](cli.py))
 also runs on any desktop/server with Python + ffmpeg.
 
+## Run in your terminal (TUI)
+
+Prefer a keyboard-driven interface over the desktop GUI — or you're on a
+headless server / SSH session? The desktop, Termux, and web installs all
+already had a terminal-friendly path via [`cli.py`](cli.py); **V4.3** adds a
+full interactive terminal UI (built with [Textual](https://textual.textualize.io))
+with the same Download / Convert / Log tabs as the desktop app, driving the
+*same* engine:
+
+```bash
+pip install -r requirements-tui.txt   # yt-dlp + textual (ffmpeg on PATH)
+python -m tui                         # or: python -m tui --lang zh_tw
+```
+
+Keyboard shortcuts: `d` toggles light/dark, `q` quits. The language is fixed
+at launch via `--lang` (like `cli.py`) rather than switchable mid-session.
+
 ## Project layout
 
 ```
@@ -140,6 +157,7 @@ Source_Code/
 ├── engine_sidecar.py   stdio IPC entrypoint spawned by the Rust shell
 ├── web_app.py    Flask + SSE backend for the standalone web app (V4.1)
 ├── cli.py        terminal CLI over the engine (great for Termux / headless)
+├── tui/          interactive terminal UI (Textual) over the same engine
 ├── termux/       Android (Termux) launchers + guide
 ├── ai/           OpenRouter client + multi-model planning pipeline
 ├── locales/      en.json / zh_tw.json / zh_cn.json

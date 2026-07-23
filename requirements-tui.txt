@@ -1,0 +1,4 @@
+# Terminal UI (tui/) — interactive desktop terminal version.
+# The engine itself only needs yt-dlp (+ ffmpeg on PATH); this adds the TUI framework.
+yt-dlp
+textual>=8.0
