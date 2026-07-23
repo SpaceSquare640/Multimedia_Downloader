@@ -6,6 +6,19 @@
 
 ## English
 
+### [4.2.2] — 2026-07-23
+
+#### Added
+- **Confirm-before-clear for the Run Log** — clicking "Clear" now asks for
+  confirmation first instead of wiping the log instantly with no way back
+  (export it first if you need to keep a copy).
+- A language icon next to the language selector in the header.
+
+#### Changed
+- CI now runs the full test suite (63 Python unit tests, `svelte-check`,
+  `cargo check`/`clippy`) on every push to `main`, catching regressions before
+  they can reach a tagged release. No effect on the app itself.
+
 ### [4.2.1] — 2026-07-23
 
 #### Fixed
@@ -120,6 +133,18 @@ generation of the app: `Version/Version3.0/CHANGELOG.md`.
 
 ## 繁體中文
 
+### [4.2.2] — 2026-07-23
+
+#### 新增
+- **清空運行日誌前加確認** — 點擊「清空」現在會先詢問確認，不會再一鍵就把
+  日誌直接清光、無法復原（如果需要保留，請先匯出）。
+- 頁首語言選單旁加了一個語言圖示。
+
+#### 變更
+- CI 現在會在每次 push 到 `main` 時跑完整測試套件（63 項 Python 測試、
+  `svelte-check`、`cargo check`／`clippy`），在問題進到正式發布前先攔下來。
+  不影響 App 本身。
+
 ### [4.2.1] — 2026-07-23
 
 #### 修復
@@ -216,6 +241,18 @@ tkinter/Flask 世代的完整變更歷程見 V3.0 changelog：
 ---
 
 ## 简体中文
+
+### [4.2.2] — 2026-07-23
+
+#### 新增
+- **清空运行日志前加确认** — 点击「清空」现在会先询问确认，不会再一键就把
+  日志直接清空、无法恢复（如果需要保留，请先导出）。
+- 页首语言选单旁加了一个语言图标。
+
+#### 变更
+- CI 现在会在每次 push 到 `main` 时跑完整测试套件（63 项 Python 测试、
+  `svelte-check`、`cargo check`／`clippy`），在问题进入正式发布前先拦下来。
+  不影响 App 本身。
 
 ### [4.2.1] — 2026-07-23
 

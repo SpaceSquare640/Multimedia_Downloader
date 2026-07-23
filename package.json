@@ -1,6 +1,6 @@
 {
   "name": "multimedia-downloader-v4",
-  "version": "4.2.1",
+  "version": "4.2.2",
   "private": true,
   "description": "V4.0 desktop app root — Tauri orchestration. frontend/ = Svelte web UI, src-tauri/ = Rust shell, engine/ + engine_sidecar.py = Python engine.",
   "scripts": {
