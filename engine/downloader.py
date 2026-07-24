@@ -45,6 +45,11 @@ class Downloader:
         self.progress_cb   = progress_cb
         self.item_start_cb = item_start_cb
         self._stop         = False
+        # yt-dlp expands a playlist URL into all its entries on its own (no
+        # option here restricts it) -- this only tracks that expansion so we
+        # can log "item i/n" as it moves between entries; it does not change
+        # what gets downloaded.
+        self._playlist_index_logged: Optional[int] = None
 
     # ── Public ──────────────────────────────────────────────────────────────
     def stop(self) -> None:
@@ -58,6 +63,7 @@ class Downloader:
         This is the atomic unit reused by :meth:`download_batch` and the task
         queue; it does not catch exceptions so callers can decide how to report.
         """
+        self._playlist_index_logged = None
         opts = self._build_ydl_opts(url)
         with yt_dlp.YoutubeDL(opts) as ydl:
             ydl.download([url])
@@ -139,6 +145,13 @@ class Downloader:
 
     def _ydl_hook(self, d: dict) -> None:
         """yt-dlp progress hook — fans out to the registered progress callback."""
+        info = d.get("info_dict") or {}
+        n_entries, idx = info.get("n_entries"), info.get("playlist_index")
+        if n_entries and idx and idx != self._playlist_index_logged:
+            self._playlist_index_logged = idx
+            self._log("info", "log_playlist_item", i=idx, t=n_entries,
+                      title=info.get("title") or info.get("id") or "")
+
         if d["status"] == "downloading" and self.progress_cb:
             try:
                 pct_str = d.get("_percent_str", "0%").strip().replace("%", "")

@@ -10,6 +10,11 @@
 
 ## English
 
+### [4.3.3] — 2026-07-24
+
+#### Added
+- **Playlist position in the Run Log** ([#10](https://github.com/SpaceSquare640/Multimedia_Downloader/issues/10)) — pasting a playlist URL already downloaded every entry in it (yt-dlp's default behavior), but the log and task list gave no indication that more than one file was involved. The log now shows "Playlist item i/t: title" as each entry starts, across every frontend (desktop, web, CLI, TUI) since it's emitted from the shared engine. Selecting which entries to include, and reflecting the expanded count in the batch task list itself, remain unimplemented (tracked in #10) — this only adds visibility into what's already happening.
+
 ### [4.3.2] — 2026-07-24
 
 #### Fixed

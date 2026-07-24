@@ -79,6 +79,7 @@
   "msg_log_empty_body": "目前没有日志可以保存。请先执行下载。",
   "log_start_batch": "▶  开始下载 {n} 个链接⋯",
   "log_item_downloading": "[{i}/{t}]  下载中：{url}",
+  "log_playlist_item": "📃  播放列表第 {i}/{t} 个：{title}",
   "log_item_done": "[{i}/{t}]  ✓  完成",
   "log_item_error": "[{i}/{t}]  ✗  错误：{err}",
   "log_all_done": "✓  全部 {t} 个任务完成。",

@@ -79,6 +79,7 @@
   "msg_log_empty_body": "No log entries to save. Please run a download first.",
   "log_start_batch": "▶  Starting {n} download(s)…",
   "log_item_downloading": "[{i}/{t}]  Downloading: {url}",
+  "log_playlist_item": "📃  Playlist item {i}/{t}: {title}",
   "log_item_done": "[{i}/{t}]  ✓  Done",
   "log_item_error": "[{i}/{t}]  ✗  Error: {err}",
   "log_all_done": "✓  All {t} tasks finished.",
