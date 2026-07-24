@@ -23,7 +23,9 @@
   class="pt-safe sticky top-0 z-30 border-b border-zinc-200 bg-white/85 backdrop-blur
          dark:border-zinc-800 dark:bg-zinc-950/85"
 >
-  <div class="mx-auto flex h-14 max-w-5xl items-center gap-3 px-4">
+  <!-- Matches <main>'s max-w-* scale in App.svelte so the header row and
+       content column stay aligned at every viewport width (issue #8). -->
+  <div class="mx-auto flex h-14 max-w-[clamp(64rem,90vw,100rem)] items-center gap-3 px-4">
     <!-- Brand -->
     <div class="flex min-w-0 items-center gap-2.5">
       <div class="grid size-8 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-sm">

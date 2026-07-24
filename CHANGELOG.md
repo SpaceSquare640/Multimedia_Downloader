@@ -10,6 +10,11 @@
 
 ## English
 
+### [4.3.4] — 2026-07-24
+
+#### Fixed
+- **Large empty margins on a maximized/wide desktop window** ([#8](https://github.com/SpaceSquare640/Multimedia_Downloader/issues/8), follow-up) — v4.3.2 fixed this issue's navigation-swapping symptom but missed the "large black empty spaces" half of the same report: the content column and header row were both hard-capped at a fixed 1024px regardless of window width. Replaced the fixed cap with `clamp(64rem, 90vw, 100rem)` — floors at the original 1024px for normal window sizes, scales continuously with viewport width, caps at 1600px on very wide/ultrawide displays. (A first attempt at this used discrete breakpoint tiers instead of `clamp()`; caught before release that the tiers stopped widening past a `2xl` breakpoint, so the margin would have grown back *larger than before* on any monitor wider than ~1536px — `clamp()` scales continuously with no such ceiling regression.)
+
 ### [4.3.3] — 2026-07-24
 
 #### Added

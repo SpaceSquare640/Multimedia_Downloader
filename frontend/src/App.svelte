@@ -84,8 +84,17 @@
   <TabBar {active} onselect={(id) => (active = id)} />
 
   <!-- pb-24 on mobile clears the fixed bottom nav + FAB (web build only —
-       the desktop app never shows either, see TabBar.svelte) -->
-  <main class="mx-auto w-full max-w-5xl flex-1 px-4 pt-4 {IS_TAURI ? 'pb-8' : 'pb-24 lg:pb-8'}">
+       the desktop app never shows either, see TabBar.svelte). issue #8's
+       other half: a maximized/wide window left large empty margins around
+       a hard-capped 1024px column. A first attempt widened this via 2
+       fixed breakpoint tiers, but that cap stopped growing past the 2xl
+       (1536px) breakpoint -- so on any monitor wider than that, the margin
+       grew back LARGER than before the "fix". Using clamp() instead gives
+       genuinely continuous scaling with no such regression: floors at the
+       original 64rem (1024px) for normal window sizes, grows fluidly as
+       90% of viewport width, caps at 100rem (1600px) so very long lines
+       don't form on ultrawide displays. -->
+  <main class="mx-auto w-full max-w-[clamp(64rem,90vw,100rem)] flex-1 px-4 pt-4 {IS_TAURI ? 'pb-8' : 'pb-24 lg:pb-8'}">
     {#if active === "video"}
       <DownloadTab mode="video" {formats} />
     {:else if active === "music"}
