@@ -10,6 +10,11 @@
 
 ## English
 
+### [4.3.2] — 2026-07-24
+
+#### Fixed
+- **Desktop app navigation swapping style when the window is resized** ([#8](https://github.com/SpaceSquare640/Multimedia_Downloader/issues/8)) — the top pill-bar nav vs. bottom nav + floating AI button was previously a pure CSS width breakpoint (`lg`), shared with the web build where it's genuinely needed for real phone browsers. In the desktop app this meant resizing the OS window across that breakpoint swapped the entire navigation style and moved the AI Assistant button, which read as broken rather than responsive. The desktop app (`IS_TAURI`) now always uses the top pill bar and header AI button regardless of window width; the web build's responsive mobile layout is unchanged.
+
 ### [4.3.1] — 2026-07-23
 
 #### Fixed

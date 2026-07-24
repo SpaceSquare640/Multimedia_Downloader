@@ -1,6 +1,6 @@
 {
   "name": "multimedia-downloader-frontend",
-  "version": "4.3.1",
+  "version": "4.3.2",
   "description": "V4.0 web frontend (Svelte + Vite + TS): floating window with 4 tabs, wired to the Python engine via Tauri IPC.",
   "type": "module",
   "scripts": {

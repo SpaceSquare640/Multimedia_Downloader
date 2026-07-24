@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Clapperboard, Music, RefreshCw, ScrollText } from "lucide-svelte";
   import { t } from "../store";
+  import { IS_TAURI } from "../api";
   import type { TabId } from "../lib/tabs";
 
   let { active, onselect }: { active: TabId; onselect: (id: TabId) => void } = $props();
@@ -16,8 +17,13 @@
   ]);
 </script>
 
-<!-- Desktop / tablet (lg+): horizontal pill bar under the header -->
-<nav class="hidden justify-center px-4 pt-4 lg:flex" aria-label="Sections">
+<!-- Desktop / tablet (lg+): horizontal pill bar under the header. Always
+     shown in the Tauri desktop app regardless of window width -- issue #8
+     was the OS window swapping to the mobile bottom nav below just because
+     it got narrower, which reads as broken for an installed desktop app.
+     The web build keeps the width-based responsive switch (real phone
+     browsers still need the mobile layout). -->
+<nav class="justify-center px-4 pt-4 {IS_TAURI ? 'flex' : 'hidden lg:flex'}" aria-label="Sections">
   <div
     class="flex gap-1 rounded-xl border border-zinc-200 bg-white p-1 dark:border-zinc-800 dark:bg-zinc-900"
     role="tablist"
@@ -39,26 +45,30 @@
   </div>
 </nav>
 
-<!-- Mobile (<lg): fixed bottom navigation, safe-area aware, ≥44px touch targets -->
-<nav
-  class="pb-safe fixed inset-x-0 bottom-0 z-30 border-t border-zinc-200 bg-white/95
-         backdrop-blur lg:hidden dark:border-zinc-800 dark:bg-zinc-950/95"
-  aria-label="Sections"
->
-  <div class="grid grid-cols-4" role="tablist">
-    {#each tabs as tab}
-      <button
-        role="tab"
-        aria-selected={active === tab.id}
-        class="flex min-h-14 flex-col items-center justify-center gap-0.5 text-[10px]
-               {active === tab.id
-                 ? 'font-semibold text-indigo-500'
-                 : 'text-zinc-500 dark:text-zinc-400'}"
-        onclick={() => onselect(tab.id)}
-      >
-        <tab.icon class="size-5" aria-hidden="true" />
-        {tab.short}
-      </button>
-    {/each}
-  </div>
-</nav>
+{#if !IS_TAURI}
+  <!-- Mobile (<lg): fixed bottom navigation, safe-area aware, ≥44px touch
+       targets. Web build only -- the desktop app always uses the pill bar
+       above instead, regardless of window width (see comment there). -->
+  <nav
+    class="pb-safe fixed inset-x-0 bottom-0 z-30 border-t border-zinc-200 bg-white/95
+           backdrop-blur lg:hidden dark:border-zinc-800 dark:bg-zinc-950/95"
+    aria-label="Sections"
+  >
+    <div class="grid grid-cols-4" role="tablist">
+      {#each tabs as tab}
+        <button
+          role="tab"
+          aria-selected={active === tab.id}
+          class="flex min-h-14 flex-col items-center justify-center gap-0.5 text-[10px]
+                 {active === tab.id
+                   ? 'font-semibold text-indigo-500'
+                   : 'text-zinc-500 dark:text-zinc-400'}"
+          onclick={() => onselect(tab.id)}
+        >
+          <tab.icon class="size-5" aria-hidden="true" />
+          {tab.short}
+        </button>
+      {/each}
+    </div>
+  </nav>
+{/if}

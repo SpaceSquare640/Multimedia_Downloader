@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { Sparkles } from "lucide-svelte";
-  import { api, IS_MOCK, type Formats, type EngineEvent } from "./api";
+  import { api, IS_MOCK, IS_TAURI, type Formats, type EngineEvent } from "./api";
   import { lang, t, pushLog, progress, busy, markDownloadItem } from "./store";
   import { Translator } from "./i18n";
   import Header from "./components/Header.svelte";
@@ -83,8 +83,9 @@
 
   <TabBar {active} onselect={(id) => (active = id)} />
 
-  <!-- pb-24 on mobile clears the fixed bottom nav + FAB -->
-  <main class="mx-auto w-full max-w-5xl flex-1 px-4 pt-4 pb-24 lg:pb-8">
+  <!-- pb-24 on mobile clears the fixed bottom nav + FAB (web build only —
+       the desktop app never shows either, see TabBar.svelte) -->
+  <main class="mx-auto w-full max-w-5xl flex-1 px-4 pt-4 {IS_TAURI ? 'pb-8' : 'pb-24 lg:pb-8'}">
     {#if active === "video"}
       <DownloadTab mode="video" {formats} />
     {:else if active === "music"}
@@ -96,8 +97,10 @@
     {/if}
   </main>
 
-  <!-- Mobile FAB for the AI assistant (header button is lg+ only) -->
-  {#if !showAi && !showManual}
+  <!-- Mobile FAB for the AI assistant (web build only, header button is
+       lg+ only there; the desktop app always shows the header button
+       instead, see Header.svelte) -->
+  {#if !showAi && !showManual && !IS_TAURI}
     <button
       class="fixed right-4 bottom-20 z-30 flex size-14 items-center justify-center rounded-full
              bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-lg

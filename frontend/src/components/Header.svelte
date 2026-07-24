@@ -3,6 +3,7 @@
   import { lang, t } from "../store";
   import { theme, cycleTheme } from "../lib/theme";
   import { SUPPORTED, type Lang } from "../i18n";
+  import { IS_TAURI } from "../api";
 
   let {
     langNames,
@@ -80,11 +81,14 @@
         <ThemeIcon class="size-4" aria-hidden="true" />
       </button>
 
-      <!-- AI Assistant — hidden on mobile (the FAB covers it there) -->
+      <!-- AI Assistant — always shown in the Tauri desktop app (which never
+           falls back to the mobile FAB, see TabBar.svelte/App.svelte); on
+           the web build it's hidden below lg (the FAB covers it there). -->
       <button
-        class="hidden h-9 items-center gap-1.5 rounded-lg bg-gradient-to-r from-indigo-500
+        class="h-9 items-center gap-1.5 rounded-lg bg-gradient-to-r from-indigo-500
                to-violet-600 px-3 text-xs font-semibold text-white shadow-sm
-               transition-transform hover:scale-[1.03] active:scale-95 lg:flex"
+               transition-transform hover:scale-[1.03] active:scale-95
+               {IS_TAURI ? 'flex' : 'hidden lg:flex'}"
         onclick={onToggleAi}
         title="Ctrl/Cmd + K"
       >
