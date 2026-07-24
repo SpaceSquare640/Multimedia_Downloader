@@ -42,3 +42,21 @@ export const progress = writable<Progress | null>(null);
 
 /** True while an engine operation (download/convert) is running. */
 export const busy = writable(false);
+
+// Per-batch download item list. Lives here (not as DownloadTab.svelte local
+// state) so it survives switching away to another tab and back — Svelte's
+// {#if}/{:else if} tab switching in App.svelte destroys and recreates the
+// tab component on every switch, which was silently wiping a component-local
+// list (see GitHub issue #9). Updated from App.svelte's global event
+// listener, which — unlike a per-tab onMount — is never torn down.
+export type DownloadItem = { url: string; status: "pending" | "running" | "done" | "error" };
+export const downloadItems = writable<DownloadItem[]>([]);
+
+export function markDownloadItem(index: number, status: DownloadItem["status"]): void {
+  downloadItems.update((items) => {
+    if (!items[index]) return items;
+    const next = [...items];
+    next[index] = { ...next[index], status };
+    return next;
+  });
+}

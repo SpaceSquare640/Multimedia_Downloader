@@ -1,10 +1,9 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import { Play, Square, Link2, Clock, Loader2, CheckCircle2, XCircle } from "lucide-svelte";
   import Card from "../components/Card.svelte";
   import ProgressBar from "../components/ProgressBar.svelte";
-  import { api, type Formats, type EngineEvent } from "../api";
-  import { t, progress, busy } from "../store";
+  import { api, type Formats } from "../api";
+  import { t, progress, busy, downloadItems } from "../store";
   import { toast } from "../lib/toast";
 
   let { mode, formats }: { mode: "video" | "audio"; formats: Formats | null } = $props();
@@ -21,28 +20,13 @@
   let savePath = $state("");
   let browser = $state("none");
 
-  // Per-batch item list so the user sees each URL's live status.
-  type Item = { url: string; status: "pending" | "running" | "done" | "error" };
-  let items = $state<Item[]>([]);
-
-  onMount(() =>
-    api.onEvent((e: EngineEvent) => {
-      if (e.type === "item_start" && items[e.index - 1]) {
-        items[e.index - 1].status = "running";
-      } else if (e.type === "log" && e.fmt && typeof e.fmt.i === "number") {
-        const idx = (e.fmt.i as number) - 1;
-        if (!items[idx]) return;
-        if (e.key === "log_item_done") items[idx].status = "done";
-        else if (e.key === "log_item_error") items[idx].status = "error";
-      }
-    }),
-  );
-
   const urlList = $derived(urls.split("\n").map((u) => u.trim()).filter(Boolean));
 
   async function start() {
     if (urlList.length === 0) return;
-    items = urlList.map((url) => ({ url, status: "pending" }));
+    // Lives in the shared store (not local state) so it survives switching
+    // away to another tab and back — see store.ts's downloadItems comment.
+    downloadItems.set(urlList.map((url) => ({ url, status: "pending" })));
     busy.set(true);
     progress.set(null);
     try {
@@ -163,10 +147,10 @@
   </div>
 
   <!-- Per-item batch status -->
-  {#if items.length > 0}
+  {#if $downloadItems.length > 0}
     <Card title={tr("ai_tasks_title")}>
       <ul class="flex flex-col gap-1.5">
-        {#each items as item}
+        {#each $downloadItems as item}
           <li class="flex items-center gap-2.5 rounded-lg bg-zinc-50 px-3 py-2 text-xs dark:bg-zinc-950">
             {#if item.status === "pending"}<Clock class="size-3.5 shrink-0 text-zinc-400" aria-hidden="true" />
             {:else if item.status === "running"}<Loader2 class="size-3.5 shrink-0 animate-spin text-indigo-500" aria-hidden="true" />

@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import { Sparkles } from "lucide-svelte";
   import { api, IS_MOCK, type Formats, type EngineEvent } from "./api";
-  import { lang, t, pushLog, progress, busy } from "./store";
+  import { lang, t, pushLog, progress, busy, markDownloadItem } from "./store";
   import { Translator } from "./i18n";
   import Header from "./components/Header.svelte";
   import TabBar from "./components/TabBar.svelte";
@@ -46,11 +46,14 @@
       if (e.type === "log") {
         const translate = new Translator($lang);
         pushLog(e.level, translate.t(e.key, e.fmt));
+        if (e.key === "log_item_done") markDownloadItem((e.fmt?.i as number) - 1, "done");
+        else if (e.key === "log_item_error") markDownloadItem((e.fmt?.i as number) - 1, "error");
       } else if (e.type === "progress") {
         progress.set({ pct: e.pct, speed: e.speed, eta: e.eta });
         if (e.pct >= 100) busy.set(false);
       } else if (e.type === "item_start") {
         progress.set({ pct: 0, speed: "--", eta: "--" });
+        markDownloadItem(e.index - 1, "running");
       }
     });
 

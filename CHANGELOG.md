@@ -10,6 +10,11 @@
 
 ## English
 
+### [4.3.1] — 2026-07-23
+
+#### Fixed
+- **Download task list disappearing when switching tabs** ([#9](https://github.com/SpaceSquare640/Multimedia_Downloader/issues/9)) — the per-batch task list lived in `DownloadTab.svelte`'s local component state, which Svelte destroys and recreates every time `App.svelte`'s `{#if}` tab switch swaps to a different tab (downloads themselves kept running in the background; only the UI's tracking of them was wiped). Moved the list into the shared store alongside `progress`/`busy`/`logs`, updated from `App.svelte`'s already-persistent global event listener instead of a per-tab one, so it now survives navigating away and back — and stays visible from either the Video or Music tab while a batch is running, consistent with how progress/busy already work app-wide.
+
 ### [4.3.0] — 2026-07-23
 
 #### Added
