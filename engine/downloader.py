@@ -9,9 +9,17 @@ both :meth:`download_batch` and the AI-driven :class:`engine.queue.TaskQueue`).
 from __future__ import annotations
 
 import os
+import time
 from typing import Iterable, Optional
 
 import yt_dlp
+
+#: Errors matching these substrings are transient (usually a stale signature /
+#: token from YouTube's extractor) and worth a fresh retry rather than an
+#: immediate failure.
+_TRANSIENT_ERROR_MARKERS = ("403", "Forbidden", "HTTP Error 5")
+_MAX_RETRIES = 2
+_RETRY_DELAY_S = 2
 
 from .formats import build_ydl_format_string, platform_headers
 from .options import (
@@ -91,7 +99,7 @@ class Downloader:
             self._log("info", "log_item_downloading", i=i, t=total, url=url)
 
             try:
-                self.download_one(url)
+                self._download_one_with_retry(url, i, total)
                 self._log("ok", "log_item_done", i=i, t=total)
                 results.append((url, True, ""))
             except Exception as e:  # yt-dlp raises DownloadError + others
@@ -100,6 +108,20 @@ class Downloader:
 
         self._log("ok", "log_all_done", t=total)
         return results
+
+    def _download_one_with_retry(self, url: str, i: int, total: int) -> None:
+        """Retry ``download_one`` on transient errors (e.g. YouTube 403s)."""
+        for attempt in range(_MAX_RETRIES + 1):
+            try:
+                self.download_one(url)
+                return
+            except Exception as e:
+                is_transient = any(m in str(e) for m in _TRANSIENT_ERROR_MARKERS)
+                if not is_transient or attempt == _MAX_RETRIES or self._stop:
+                    raise
+                time.sleep(_RETRY_DELAY_S)
+                self._log("info", "log_item_retry", i=i, t=total,
+                          n=attempt + 1, max=_MAX_RETRIES)
 
     # ── Private ─────────────────────────────────────────────────────────────
     def _build_ydl_opts(self, url: str) -> dict:

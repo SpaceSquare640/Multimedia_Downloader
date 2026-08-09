@@ -10,6 +10,11 @@
 
 ## English
 
+### [4.3.5] — 2026-08-09
+
+#### Fixed
+- **Batch downloads failing with `HTTP Error 403: Forbidden`** — YouTube occasionally returns a 403 for a video due to a stale signature/token in yt-dlp's extraction, even though the exact same request succeeds moments later on retry. `download_batch` now automatically retries an item up to 2 times (with a short delay) when the error looks transient (403/Forbidden/5xx) before reporting it as a real failure, logging a "Retrying (n/max)" line in the Run Log for each attempt.
+
 ### [4.3.4] — 2026-07-24
 
 #### Fixed
