@@ -10,6 +10,11 @@
 
 ## English
 
+### [4.3.6] — 2026-08-19
+
+#### Maintenance
+- **Dependency updates** — bumped frontend packages (Svelte, Vite, Tailwind, `@types/node`, `svelte-check`) and Rust crates within their existing semver ranges via `npm update` / `cargo update`. No behavior changes; a TypeScript major-version bump (5.x → 7.x) was left out pending a dedicated upgrade pass.
+
 ### [4.3.5] — 2026-08-09
 
 #### Fixed
