@@ -187,5 +187,8 @@
   "manual_sec_help_title": "❓  更多帮助",
   "manual_sec_help_body": "完整说明文档、常见问题、已知限制：\ngithub.com/SpaceSquare640/Multimedia_Downloader/wiki\n\n发现问题？开一个 Issue：\ngithub.com/SpaceSquare640/Multimedia_Downloader/issues",
   "log_clear_confirm_title": "要清空日志吗？",
-  "log_clear_confirm_body": "会移除当前显示的所有记录，且无法恢复（如果需要保留，请先导出）。"
+  "log_clear_confirm_body": "会移除当前显示的所有记录，且无法恢复（如果需要保留，请先导出）。",
+  "update_available": "有新版本 {v} 可用（当前版本：{cur}）。",
+  "update_view": "查看发布",
+  "update_dismiss": "忽略"
 }

@@ -8,6 +8,7 @@
   import TabBar from "./components/TabBar.svelte";
   import type { TabId } from "./lib/tabs";
   import Toasts from "./components/Toasts.svelte";
+  import UpdateBanner from "./components/UpdateBanner.svelte";
   import DownloadTab from "./tabs/DownloadTab.svelte";
   import ConvertTab from "./tabs/ConvertTab.svelte";
   import LogTab from "./tabs/LogTab.svelte";
@@ -74,6 +75,10 @@
 
 <div class="flex min-h-dvh flex-col">
   <Header {langNames} onToggleAi={toggleAi} onToggleManual={toggleManual} />
+
+  {#if IS_TAURI}
+    <UpdateBanner />
+  {/if}
 
   {#if IS_MOCK}
     <div class="bg-amber-100 py-1 text-center text-[11px] text-amber-800 dark:bg-amber-950/60 dark:text-amber-400">

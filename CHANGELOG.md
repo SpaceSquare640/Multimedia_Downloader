@@ -10,6 +10,14 @@
 
 ## English
 
+### [4.3.8] — 2026-08-23
+
+#### Added
+- **In-app update check** — the desktop app now checks GitHub Releases on startup and shows a dismissible banner when a newer version is available, linking straight to the release page. Uses the new `tauri-plugin-opener` to reliably open the link in the system's default browser across platforms. Dismissing a version suppresses the banner until the next release. Desktop app only (web build unaffected); fails silently if offline or rate-limited.
+
+#### Maintenance
+- Checked `yt-dlp`, frontend, and Rust dependencies — all already current (no updates needed since v4.3.7).
+
 ### [4.3.7] — 2026-08-23
 
 #### Maintenance

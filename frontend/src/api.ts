@@ -334,3 +334,18 @@ export const IS_MOCK = !isTauri && !USE_WEB;
 /** True when running inside the Tauri desktop shell (native dialogs, IPC…). */
 export const IS_TAURI = isTauri;
 export { FORMATS as MOCK_FORMATS };
+
+/**
+ * Opens a URL in the system's default browser. Inside Tauri, a plain
+ * `<a target="_blank">`/`window.open` doesn't reliably reach the OS browser
+ * across platforms, hence the `opener` plugin; in a plain browser tab
+ * `window.open` already does the right thing.
+ */
+export async function openExternal(url: string): Promise<void> {
+  if (isTauri) {
+    const { openUrl } = await import("@tauri-apps/plugin-opener");
+    await openUrl(url);
+  } else {
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
+}
