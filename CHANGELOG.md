@@ -10,6 +10,11 @@
 
 ## English
 
+### [4.3.7] — 2026-08-23
+
+#### Maintenance
+- **Dependency updates** — upgraded `yt-dlp` 2026.7.4 → 2026.8.19 (unpinned in `requirements.txt`; installed copy only, no file change), bumped frontend packages (Svelte, Vite) within semver via `npm update`, and Rust crates via `cargo update`. No behavior changes. Verified with a full frontend build, all 76 Python tests, and `cargo check`.
+
 ### [4.3.6] — 2026-08-19
 
 #### Maintenance
