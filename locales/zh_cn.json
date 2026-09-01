@@ -84,6 +84,8 @@
   "log_item_done": "[{i}/{t}]  ✓  完成",
   "log_item_error": "[{i}/{t}]  ✗  错误：{err}",
   "log_all_done": "✓  全部 {t} 个任务完成。",
+  "log_all_done_partial": "⚠  完成：{ok} 个成功、{fail} 个失败（共 {t} 个）。",
+  "log_all_failed": "✗  全部 {t} 个任务均失败。",
   "log_stopped_dl": "⛔  下载已停止。",
   "log_stopping": "⚠  正在停止⋯",
   "log_cookie_file": "🍪  使用 Cookie 文件：{name}",
@@ -94,6 +96,8 @@
   "log_no_ffmpeg": "[{i}/{t}]  ✗  找不到 ffmpeg — 请到 https://ffmpeg.org 下载",
   "log_convert_stopped": "⛔  转换已停止。",
   "log_all_converted": "✓  全部 {t} 个转换完成。",
+  "log_all_converted_partial": "⚠  完成：{ok} 个转换成功、{fail} 个失败（共 {t} 个）。",
+  "log_all_convert_failed": "✗  全部 {t} 个转换均失败。",
   "log_save_failed_dir": "⚠  日志保存失败：目录不存在 — {path}",
   "log_save_failed": "⚠  日志保存失败：{err}",
   "log_saved": "📄  日志已保存 → {name}",
@@ -190,5 +194,6 @@
   "log_clear_confirm_body": "会移除当前显示的所有记录，且无法恢复（如果需要保留，请先导出）。",
   "update_available": "有新版本 {v} 可用（当前版本：{cur}）。",
   "update_view": "查看发布",
-  "update_dismiss": "忽略"
+  "update_dismiss": "忽略",
+  "log_hint_outdated": "[{i}/{t}]  ⚠  连续出现 403 错误通常代表内置的下载组件已过期，请更新到最新版本。"
 }

@@ -106,8 +106,28 @@ class Downloader:
                 self._log("err", "log_item_error", i=i, t=total, err=str(e))
                 results.append((url, False, str(e)))
 
-        self._log("ok", "log_all_done", t=total)
+        self._log_batch_summary(results, total)
         return results
+
+    def _log_batch_summary(
+        self, results: list[tuple[str, bool, str]], total: int
+    ) -> None:
+        """
+        Report how the batch actually ended.
+
+        Previously this always logged ``log_all_done`` at "ok" level, so a batch
+        where every item failed still showed a green checkmark. Mirrors the
+        ok/fail reporting :class:`engine.queue.TaskQueue` already does.
+        """
+        ok = sum(1 for _, success, _ in results if success)
+        fail = len(results) - ok
+
+        if fail == 0:
+            self._log("ok", "log_all_done", t=total)
+        elif ok == 0:
+            self._log("err", "log_all_failed", t=fail)
+        else:
+            self._log("warn", "log_all_done_partial", ok=ok, fail=fail, t=total)
 
     def _download_one_with_retry(self, url: str, i: int, total: int) -> None:
         """Retry ``download_one`` on transient errors (e.g. YouTube 403s)."""
@@ -118,10 +138,17 @@ class Downloader:
             except Exception as e:
                 is_transient = any(m in str(e) for m in _TRANSIENT_ERROR_MARKERS)
                 if not is_transient or attempt == _MAX_RETRIES or self._stop:
+                    # A 403 that survives every retry is almost always a stale
+                    # extractor (YouTube rotates its player), not a transient
+                    # blip -- point the user at updating rather than retrying.
+                    if is_transient and "403" in str(e):
+                        self._log("warn", "log_hint_outdated", i=i, t=total)
                     raise
-                time.sleep(_RETRY_DELAY_S)
+                # Log before sleeping: otherwise the UI sits silent for the
+                # whole delay and looks frozen.
                 self._log("info", "log_item_retry", i=i, t=total,
                           n=attempt + 1, max=_MAX_RETRIES)
+                time.sleep(_RETRY_DELAY_S)
 
     # ── Private ─────────────────────────────────────────────────────────────
     def _build_ydl_opts(self, url: str) -> dict:

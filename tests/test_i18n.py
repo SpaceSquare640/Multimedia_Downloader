@@ -8,10 +8,12 @@ from i18n import Translator
 # line ever falls through to a raw key at runtime.
 ENGINE_LOG_KEYS = [
     "log_start_batch", "log_stopped_dl", "log_item_downloading", "log_item_done",
-    "log_item_error", "log_all_done", "log_playlist_item",
+    "log_item_error", "log_all_done", "log_all_done_partial", "log_all_failed",
+    "log_item_retry", "log_hint_outdated", "log_playlist_item",
     "log_cookie_file", "log_cookie_browser",
     "log_convert_start", "log_convert_done", "log_convert_error", "log_no_ffmpeg",
     "log_convert_stopped", "log_all_converted",
+    "log_all_converted_partial", "log_all_convert_failed",
     "log_queue_start", "log_queue_stopped", "log_queue_done",
     "log_ai_planning_start", "log_ai_executing", "log_ai_checking",
     "log_ai_plan_ready", "log_ai_plan_error",

@@ -10,6 +10,18 @@
 
 ## English
 
+### [4.3.9] — 2026-09-01
+
+#### Fixed
+- **A batch where every download failed still ended with a green "All N tasks finished" line** — the Run Log's closing summary was hard-coded to the success message and level, so a batch in which all items errored out (for example, every URL returning `HTTP Error 403: Forbidden`) still looked like it had completed successfully. The summary now reflects what actually happened: a success line when everything worked, a warning line with succeeded/failed counts on a partial failure, and an error line when every item failed. The same fix is applied to format conversion, where a batch that is stopped part-way no longer counts the untouched files as failures.
+- **The "Retrying" line appeared only after the retry delay had already elapsed**, leaving the Run Log silent while the app looked frozen. It is now logged before the wait begins.
+
+#### Added
+- **A hint when 403 errors persist** — a `403` that survives every retry attempt is almost always caused by a bundled downloader that has fallen behind the site's changes, not by a transient blip. The Run Log now says so and points to updating the app, instead of leaving the error unexplained.
+
+#### Maintenance
+- Refreshed the bundled `yt-dlp` (2026.8.19) by rebuilding, restoring downloads from sites that had changed since the previous release.
+
 ### [4.3.8] — 2026-08-23
 
 #### Added

@@ -84,6 +84,8 @@
   "log_item_done": "[{i}/{t}]  ✓  Done",
   "log_item_error": "[{i}/{t}]  ✗  Error: {err}",
   "log_all_done": "✓  All {t} tasks finished.",
+  "log_all_done_partial": "⚠  Finished: {ok} succeeded, {fail} failed (of {t}).",
+  "log_all_failed": "✗  All {t} tasks failed.",
   "log_stopped_dl": "⛔  Download stopped.",
   "log_stopping": "⚠  Stopping…",
   "log_cookie_file": "🍪  Using cookie file: {name}",
@@ -94,6 +96,8 @@
   "log_no_ffmpeg": "[{i}/{t}]  ✗  ffmpeg not found — install from https://ffmpeg.org",
   "log_convert_stopped": "⛔  Conversion stopped.",
   "log_all_converted": "✓  All {t} conversions done.",
+  "log_all_converted_partial": "⚠  Finished: {ok} converted, {fail} failed (of {t}).",
+  "log_all_convert_failed": "✗  All {t} conversions failed.",
   "log_save_failed_dir": "⚠  Log save failed: directory not found — {path}",
   "log_save_failed": "⚠  Log save failed: {err}",
   "log_saved": "📄  Log saved → {name}",
@@ -190,5 +194,6 @@
   "log_clear_confirm_body": "This removes every line currently shown. It can't be undone (export it first if you need a copy).",
   "update_available": "Version {v} is available (you have {cur}).",
   "update_view": "View release",
-  "update_dismiss": "Dismiss"
+  "update_dismiss": "Dismiss",
+  "log_hint_outdated": "[{i}/{t}]  ⚠  Repeated 403 errors usually mean the bundled downloader is out of date. Please update to the latest version of the app."
 }

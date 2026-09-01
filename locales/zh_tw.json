@@ -84,6 +84,8 @@
   "log_item_done": "[{i}/{t}]  ✓  完成",
   "log_item_error": "[{i}/{t}]  ✗  錯誤：{err}",
   "log_all_done": "✓  全部 {t} 個任務完成。",
+  "log_all_done_partial": "⚠  完成：{ok} 個成功、{fail} 個失敗（共 {t} 個）。",
+  "log_all_failed": "✗  全部 {t} 個任務均失敗。",
   "log_stopped_dl": "⛔  下載已停止。",
   "log_stopping": "⚠  正在停止⋯",
   "log_cookie_file": "🍪  使用 Cookie 檔案：{name}",
@@ -94,6 +96,8 @@
   "log_no_ffmpeg": "[{i}/{t}]  ✗  找不到 ffmpeg — 請至 https://ffmpeg.org 下載",
   "log_convert_stopped": "⛔  轉換已停止。",
   "log_all_converted": "✓  全部 {t} 個轉換完成。",
+  "log_all_converted_partial": "⚠  完成：{ok} 個轉換成功、{fail} 個失敗（共 {t} 個）。",
+  "log_all_convert_failed": "✗  全部 {t} 個轉換均失敗。",
   "log_save_failed_dir": "⚠  日誌儲存失敗：目錄不存在 — {path}",
   "log_save_failed": "⚠  日誌儲存失敗：{err}",
   "log_saved": "📄  日誌已儲存 → {name}",
@@ -190,5 +194,6 @@
   "log_clear_confirm_body": "會移除目前顯示的所有紀錄，且無法復原（如果需要保留，請先匯出）。",
   "update_available": "有新版本 {v} 可用（目前版本：{cur}）。",
   "update_view": "查看發布",
-  "update_dismiss": "忽略"
+  "update_dismiss": "忽略",
+  "log_hint_outdated": "[{i}/{t}]  ⚠  連續出現 403 錯誤通常代表內建的下載元件已過期，請更新到最新版本。"
 }

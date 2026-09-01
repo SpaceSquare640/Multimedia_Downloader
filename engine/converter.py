@@ -104,7 +104,18 @@ class Converter:
                 break
             self.convert_one(job, index=i, total=total)
 
-        self._log("ok", "log_all_converted", t=total)
+        # Only jobs that actually ran count towards the summary -- a stopped
+        # batch leaves the rest untouched and they must not read as failures.
+        ran = [j for j in jobs if j.status != "pending"]
+        ok = sum(1 for j in ran if j.status == "done")
+        fail = len(ran) - ok
+        if fail == 0:
+            self._log("ok", "log_all_converted", t=total)
+        elif ok == 0:
+            self._log("err", "log_all_convert_failed", t=fail)
+        else:
+            self._log("warn", "log_all_converted_partial",
+                      ok=ok, fail=fail, t=total)
         return jobs
 
     # ── Internal ──────────────────────────────────────────────────────────────
