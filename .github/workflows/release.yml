@@ -201,14 +201,75 @@ jobs:
           chmod +x packaging/dist/engine_sidecar/ffmpeg
           packaging/dist/engine_sidecar/ffmpeg -version | head -1
 
+      # Verified the same way as the Linux step: a download that arrives with
+      # HTTP 200 but is not really an archive must fail here, not several steps
+      # later inside unzip.
+      #
+      # Unlike Linux there is no clean second source on Apple Silicon --
+      # evermeet.cx publishes x86_64 only (checked: single-arch Mach-O,
+      # cputype 0x01000007), and the arm64 builds elsewhere are behind
+      # version-numbered filenames that would go stale. So arm64 stays
+      # single-source, and the fallback is used only where it is genuinely the
+      # right architecture.
+      #
+      # Hence the arch check: bundling an Intel binary into an arm64 app would
+      # not fail the build at all -- it would ship, and then fail on any user
+      # machine without Rosetta. That is worth catching here.
       - name: Stage ffmpeg — macOS
         if: matrix.platform == 'macos-14'
         run: |
+          set -u
           arch=$(uname -m)                       # arm64 on macos-14
-          [ "$arch" = "arm64" ] && a=arm64 || a=amd64
-          curl -L -o ffmpeg.zip "https://ffmpeg.martin-riedl.de/redirect/latest/macos/$a/release/ffmpeg.zip"
-          mkdir ffmpeg-dl && unzip -o ffmpeg.zip -d ffmpeg-dl
-          cp "$(find ffmpeg-dl -name ffmpeg -type f | head -1)" packaging/dist/engine_sidecar/ffmpeg
+          if [ "$arch" = "arm64" ]; then
+            a=arm64
+            sources="https://ffmpeg.martin-riedl.de/redirect/latest/macos/arm64/release/ffmpeg.zip"
+          else
+            a=amd64
+            sources="
+            https://ffmpeg.martin-riedl.de/redirect/latest/macos/amd64/release/ffmpeg.zip
+            https://evermeet.cx/ffmpeg/getrelease/zip
+            "
+          fi
+
+          got=""
+          for url in $sources; do
+            echo "Trying $url"
+            if ! curl -fL --retry 3 --retry-delay 5 --max-time 300 -o ffmpeg.zip "$url"; then
+              echo "  download failed, trying the next source"
+              continue
+            fi
+            if ! unzip -tqq ffmpeg.zip >/dev/null 2>&1; then
+              echo "  not a valid zip ($(wc -c < ffmpeg.zip) bytes) -- probably an"
+              echo "  error page served with HTTP 200; trying the next source"
+              continue
+            fi
+            got="$url"
+            break
+          done
+          if [ -z "$got" ]; then
+            echo "::error::Could not fetch a usable ffmpeg build for macOS/$a."
+            exit 1
+          fi
+          echo "Using $got"
+
+          rm -rf ffmpeg-dl && mkdir ffmpeg-dl && unzip -oq ffmpeg.zip -d ffmpeg-dl
+          bin="$(find ffmpeg-dl -name ffmpeg -type f | head -1)"
+          if [ -z "$bin" ]; then
+            echo "::error::No ffmpeg binary inside the archive from $got."
+            exit 1
+          fi
+
+          # An app bundled with the wrong architecture builds and ships fine,
+          # then breaks on the user's machine -- check before it gets that far.
+          archs="$(lipo -archs "$bin" 2>/dev/null || echo unknown)"
+          echo "Binary architectures: $archs"
+          case " $archs " in
+            *" $arch "*) ;;
+            *) echo "::error::ffmpeg from $got is built for '$archs', but this runner is $arch -- bundling it would ship an app that breaks on the user's machine."
+               exit 1 ;;
+          esac
+
+          cp "$bin" packaging/dist/engine_sidecar/ffmpeg
           chmod +x packaging/dist/engine_sidecar/ffmpeg
           packaging/dist/engine_sidecar/ffmpeg -version | head -1
 
