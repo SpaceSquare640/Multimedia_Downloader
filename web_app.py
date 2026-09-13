@@ -72,15 +72,92 @@ def _dispatch(cmd: str, args: dict):
     return jsonify({"error": resp.get("error", "error")}), 500
 
 
+# ── Path confinement ─────────────────────────────────────────────────────────
+# Every path in a request comes from the browser, and the engine will happily
+# read and write wherever it is pointed. Unconfined, that lets any client of a
+# LAN-exposed server write files anywhere this process can write, and pull any
+# media file on the host back out through /files/. The README has always said
+# to add your own auth before exposing this beyond localhost, but that was the
+# only thing standing between a `HOST=0.0.0.0` deployment and the filesystem.
+#
+# So paths are confined to MMDL_DOWNLOADS by default. Set
+# MMDL_ALLOW_ABSOLUTE_PATHS=1 to restore the old behaviour -- meaningful for a
+# single-user localhost run where reaching the rest of the disk is the point,
+# and no worse than the desktop app, which has the same reach by design.
+ALLOW_ABSOLUTE_PATHS = os.environ.get("MMDL_ALLOW_ABSOLUTE_PATHS", "").strip().lower() in (
+    "1", "true", "yes", "on",
+)
+
+
+class UnsafePath(ValueError):
+    """A request asked for a path outside the downloads directory."""
+
+
+def _confine(path: str) -> str:
+    """
+    Return ``path`` resolved inside DOWNLOADS_DIR, or raise :class:`UnsafePath`.
+
+    Resolves symlinks on both sides before comparing, so a link planted inside
+    the downloads directory cannot be used to step outside it.
+    """
+    root = os.path.realpath(DOWNLOADS_DIR)
+    candidate = os.path.realpath(os.path.join(root, path))
+    if candidate != root and not candidate.startswith(root + os.sep):
+        raise UnsafePath(
+            f"path {path!r} is outside the server's downloads directory; "
+            "set MMDL_ALLOW_ABSOLUTE_PATHS=1 to allow arbitrary paths"
+        )
+    return candidate
+
+
 def _save_path(value) -> str:
     """Resolve a save/output dir: use the caller's if given, else the server
     downloads dir. Web clients can't browse the server's filesystem, so a blank
     field means 'put it in the server's downloads folder'."""
     p = (value or "").strip()
+    os.makedirs(DOWNLOADS_DIR, exist_ok=True)
     if not p:
-        os.makedirs(DOWNLOADS_DIR, exist_ok=True)
         return DOWNLOADS_DIR
-    return p
+    return p if ALLOW_ABSOLUTE_PATHS else _confine(p)
+
+
+def _confine_all(paths) -> list[str]:
+    """Confine a list of client-supplied file paths (conversion inputs)."""
+    if ALLOW_ABSOLUTE_PATHS:
+        return list(paths or [])
+    return [_confine(p) for p in (paths or [])]
+
+
+def _confine_tasks(tasks) -> list[dict]:
+    """
+    Confine the paths inside an AI-planned task list.
+
+    ``/api/run_queue`` used to hand these straight to the engine. The plan is
+    reviewed by the user before it runs (decision D4), but the user reviewing it
+    is not necessarily the person who owns the server, so the same confinement
+    applies here.
+    """
+    if ALLOW_ABSOLUTE_PATHS:
+        return list(tasks or [])
+    out = []
+    for t in tasks or []:
+        t = dict(t)
+        if isinstance(t.get("options"), dict) and t["options"].get("save_path"):
+            opts = dict(t["options"])
+            opts["save_path"] = _confine(opts["save_path"])
+            t["options"] = opts
+        for key in ("src_path", "dst_path"):
+            if t.get(key):
+                t[key] = _confine(t[key])
+        out.append(t)
+    return out
+
+
+@app.errorhandler(UnsafePath)
+def _handle_unsafe_path(e: UnsafePath):
+    """A rejected path is the caller's mistake, not a server fault -- 400, and
+    say what was wrong so a legitimate local user knows about the opt-out."""
+    return jsonify({"error": str(e)}), 400
 
 
 # ── Command endpoints (mirror the Rust IPC commands in src-tauri/main.rs) ─────
@@ -117,7 +194,7 @@ def api_download():
 def api_convert():
     a = request.get_json(force=True) or {}
     args = {
-        "files": a.get("files", []),
+        "files": _confine_all(a.get("files")),
         "dst_fmt": a.get("dst_fmt", "mp4"),
         "save_path": _save_path(a.get("save_path")),
     }
@@ -127,7 +204,7 @@ def api_convert():
 @app.post("/api/run_queue")
 def api_run_queue():
     a = request.get_json(force=True) or {}
-    return _dispatch("run_queue", {"tasks": a.get("tasks", [])})
+    return _dispatch("run_queue", {"tasks": _confine_tasks(a.get("tasks"))})
 
 
 @app.post("/api/ai_plan")

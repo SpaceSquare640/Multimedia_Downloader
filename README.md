@@ -93,7 +93,7 @@ Official installers for every push tag are built and published automatically
 by GitHub Actions (see `.github/workflows/release.yml`) — you don't need to
 build locally to cut a release, just push a `vX.Y.Z` tag.
 
-Run the Python test suite: `python -m unittest discover -s tests` (104 tests).
+Run the Python test suite: `python -m unittest discover -s tests` (118 tests).
 
 ## Run as a web app (V4.1)
 
@@ -116,6 +116,12 @@ folder (`MMDL_DOWNLOADS`, default `./downloads`) retrievable at `/files/<name>`
 operation at a time, like V3.0's `web_app.py`); for production put it behind a
 streaming-friendly WSGI worker, e.g. `gunicorn -k gthread -w 1 --threads 8
 web_app:app`, and add your own auth if exposing it beyond localhost.
+
+Paths sent by the browser are confined to that downloads folder, and a request
+pointing outside it is rejected with HTTP 400 — otherwise anyone who can reach
+the server could read and write files anywhere on it. Set
+`MMDL_ALLOW_ABSOLUTE_PATHS=1` to lift the restriction when you are running it
+locally for yourself and want to save elsewhere on the machine.
 
 ## Run on Android (Termux)
 
