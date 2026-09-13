@@ -1,0 +1,21 @@
+# Everything needed to run the full test suite, matching what CI installs.
+#
+# Without this the list lived only in .github/workflows/ci.yml, so a local
+# `python -m unittest discover -s tests` failed to even import test_tui unless
+# you happened to have textual installed -- which reads as a broken test suite
+# rather than a missing dependency. CI and a local checkout now install from
+# the same file, so they cannot drift apart.
+#
+#     pip install -r requirements-dev.txt
+
+# The engine, the web backend and the terminal UI.
+-r requirements-web.txt
+-r requirements-tui.txt
+
+# yt-dlp's optional extras. Not needed to run the tests, but installed so a
+# local run exercises the same yt-dlp code paths CI does.
+mutagen
+brotli
+certifi
+requests
+websockets

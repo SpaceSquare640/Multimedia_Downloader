@@ -93,7 +93,12 @@ Official installers for every push tag are built and published automatically
 by GitHub Actions (see `.github/workflows/release.yml`) — you don't need to
 build locally to cut a release, just push a `vX.Y.Z` tag.
 
-Run the Python test suite: `python -m unittest discover -s tests` (118 tests).
+Run the Python test suite:
+
+```bash
+pip install -r requirements-dev.txt          # what CI installs, in one file
+python -m unittest discover -s tests         # 118 tests
+```
 
 ## Run as a web app (V4.1)
 
