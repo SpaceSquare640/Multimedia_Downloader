@@ -10,6 +10,17 @@
 
 ## English
 
+### [4.3.10] — 2026-09-13
+
+#### Fixed
+- **The AI Assistant stopped working whenever OpenRouter retired one of its free models** — the four `:free` model ids were hard-coded, and the planner is the first call in the pipeline, so the moment its id was delisted every request failed with an HTTP 404 before anything else ran. This is the same fault that broke the assistant in 4.0.0; 4.1 only swapped in replacement ids, which have since been retired in turn. The roster is now checked against OpenRouter's public model catalogue the first time the assistant is used, and any retired model is automatically replaced with a live free one of comparable size. Substitutions are listed in the plan's warnings so it is always visible which models actually ran. If the catalogue cannot be reached the built-in defaults are used unchanged — a lookup that fails is not evidence that a model is gone — and if a model is rejected at call time despite being listed, the next candidate is tried automatically.
+
+#### Changed
+- **Refreshed the default model roster** to ids verified live on 2026-09-13: the planner now defaults to `nvidia/nemotron-3-ultra-550b-a55b:free` and the summarizer to `liquid/lfm-2.5-2.6b:free`; the executor and checker are unchanged. Substitute models are restricted to general text-to-text chat models, so the assistant can never fall back onto a classifier, embedding, or audio model that would answer the API without answering the request.
+
+#### Maintenance
+- Added 21 unit tests covering roster resolution, model substitution, and the free/chat-model filters (83 → 104 project-wide). The AI test suite no longer reaches the network: the model catalogue is injected, so a change on OpenRouter's side can no longer turn CI red.
+
 ### [4.3.9] — 2026-09-01
 
 #### Fixed

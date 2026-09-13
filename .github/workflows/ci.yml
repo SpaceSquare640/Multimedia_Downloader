@@ -12,6 +12,24 @@ on:
     branches: ["main"]
 
 jobs:
+  version-consistency:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      # The version number lives in six files and is bumped by hand, so one of
+      # them gets missed sooner or later -- Cargo.toml sat at 4.3.8 through the
+      # whole 4.3.9 release, which would have stamped the wrong version into
+      # the shipped binary. Stdlib-only, so it needs no install step and fails
+      # in seconds.
+      - name: Check version consistency
+        run: python scripts/check_version_consistency.py
+
   python-tests:
     runs-on: ubuntu-latest
     steps:

@@ -30,7 +30,29 @@ from typing import Callable, Optional
 from engine.formats import AUDIO_FORMATS, BROWSERS, QUALITY_PRESETS, VIDEO_FORMATS
 from engine.options import LogCallback
 
-from .models import CHECKER, EXECUTOR, OPENROUTER_BASE_URL, PLANNER, SUMMARIZER, Model
+from .models import (
+    CHECKER,
+    EXECUTOR,
+    OPENROUTER_BASE_URL,
+    PLANNER,
+    SUMMARIZER,
+    CatalogFetch,
+    Model,
+    Roster,
+    resolve_roster,
+)
+
+#: Substrings marking "this model id isn't servable" as opposed to a real
+#: request/auth failure. The catalogue can lag reality by minutes, so a slug it
+#: listed may still 404 at call time — that is worth one retry on an alternate,
+#: whereas a 401 or a rate limit is not.
+_DEAD_MODEL_MARKERS = (
+    "HTTP 404",
+    "HTTP 400",
+    "not a valid model",
+    "No endpoints found",
+    "No allowed providers",
+)
 
 
 class OrchestratorError(RuntimeError):
@@ -156,14 +178,40 @@ class Orchestrator:
         api_key: str,
         transport: Transport = _default_transport,
         log_cb: Optional[LogCallback] = None,
+        catalog_fetch: Optional[CatalogFetch] = None,
     ) -> None:
         if not api_key or not api_key.strip():
             raise OrchestratorError("missing OpenRouter API key")
         self._api_key = api_key
         self._transport = transport
         self._log = log_cb or (lambda *a, **k: None)
+        self._catalog_fetch = catalog_fetch
+        self._roster: Optional[Roster] = None
 
-    def _call(self, model: Model, system: str, user: str) -> str:
+    # ── Roster ────────────────────────────────────────────────────────────────
+    def roster(self) -> Roster:
+        """
+        The models to call, resolved against the live catalogue on first use.
+
+        Resolved lazily rather than at app startup: the assistant is optional
+        (it needs the user's own API key), so an unused feature must not cost
+        every launch a network round-trip. :func:`~ai.models.resolve_roster`
+        caches across instances, so one lookup covers a whole session.
+        """
+        if self._roster is None:
+            self._roster = resolve_roster(fetch=self._catalog_fetch)
+            for note in self._roster.notes:
+                if self._roster.verified:
+                    self._log("info", "log_ai_model_swapped", note=note)
+                else:
+                    self._log("warn", "log_ai_roster_unverified", err=note)
+        return self._roster
+
+    def _model(self, preferred: Model) -> Model:
+        """Resolve a role's preferred model to whatever is actually live."""
+        return self.roster().models.get(preferred.role, preferred)
+
+    def _post(self, model: Model, system: str, user: str) -> str:
         payload = {
             "model": model.slug,
             "messages": [
@@ -177,6 +225,28 @@ class Orchestrator:
             return resp["choices"][0]["message"]["content"]
         except (KeyError, IndexError, TypeError) as e:
             raise OrchestratorError(f"unexpected response from {model.slug}: {resp}") from e
+
+    def _call(self, preferred: Model, system: str, user: str) -> str:
+        """
+        Call a role's model, falling back once per alternate if the slug turns
+        out to be dead despite the catalogue listing it.
+        """
+        model = self._model(preferred)
+        tried: set[str] = set()
+        while True:
+            tried.add(model.slug)
+            try:
+                return self._post(model, system, user)
+            except OrchestratorError as e:
+                if not any(m in str(e) for m in _DEAD_MODEL_MARKERS):
+                    raise  # a real failure (auth, rate limit, network) — surface it
+                alt = self.roster().next_alternate(preferred.role, tried)
+                if alt is None:
+                    raise
+                self._log("info", "log_ai_model_swapped",
+                          note=f"{preferred.role}: {model.slug} rejected the request — "
+                               f"retrying with {alt.slug}")
+                model = alt
 
     def _catalogue(self, context: dict) -> str:
         return (
@@ -198,6 +268,9 @@ class Orchestrator:
         catalogue = self._catalogue(context)
 
         self._log("info", "log_ai_planning_start")
+        # Resolve before the first call so a dead slug is substituted rather
+        # than 404-ing the whole pipeline (the V4.0 failure mode).
+        roster_notes = list(self.roster().notes)
         draft_raw = self._call(
             PLANNER,
             "You are a planning assistant for a media downloader/converter app. "
@@ -219,6 +292,9 @@ class Orchestrator:
         refined = _extract_json(exec_raw)
 
         tasks, warnings = _validate_tasks(refined.get("tasks", []))
+        # The AI panel already renders `warnings`, so surfacing substitutions
+        # here tells the user which models actually ran without any UI change.
+        warnings = roster_notes + warnings
 
         self._log("info", "log_ai_checking")
         if tasks:

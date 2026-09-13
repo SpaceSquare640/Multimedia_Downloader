@@ -2,12 +2,32 @@ import json
 import unittest
 
 import _path  # noqa: F401
-from ai.models import PLANNER, EXECUTOR, CHECKER, SUMMARIZER
+from ai import models
+from ai.models import PLANNER, EXECUTOR, CHECKER, SUMMARIZER, ROSTER
 from ai.orchestrator import Orchestrator, OrchestratorError, _extract_json, _validate_tasks
 
 
 def _reply(content: str) -> dict:
     return {"choices": [{"message": {"content": content}}]}
+
+
+def _all_live() -> list[dict]:
+    """A catalogue in which every default slug is present and free."""
+    return [{"id": m.slug, "context_length": m.context,
+             "pricing": {"prompt": "0", "completion": "0"}} for m in ROSTER]
+
+
+def _orch(*args, **kwargs) -> Orchestrator:
+    """
+    Build an Orchestrator pinned to the default roster.
+
+    Without an injected catalogue the orchestrator resolves against the live
+    OpenRouter API, which would make these tests network-dependent and would
+    swap in whatever free model exists today (see ai/models.resolve_roster).
+    Roster substitution itself is covered in test_models.py.
+    """
+    kwargs.setdefault("catalog_fetch", _all_live)
+    return Orchestrator(*args, **kwargs)
 
 
 class ExtractJsonTests(unittest.TestCase):
@@ -90,6 +110,12 @@ class OrchestratorInitTests(unittest.TestCase):
 
 
 class PlanPipelineTests(unittest.TestCase):
+    def setUp(self):
+        models.clear_cache()
+
+    def tearDown(self):
+        models.clear_cache()
+
     def _make(self, planner=None, executor=None, checker=None, log=None):
         calls = []
 
@@ -105,7 +131,7 @@ class PlanPipelineTests(unittest.TestCase):
                 return _reply(checker)
             raise AssertionError(f"unexpected model called: {model}")
 
-        orch = Orchestrator("test-key", transport=transport, log_cb=log)
+        orch = _orch("test-key", transport=transport, log_cb=log)
         return orch, calls
 
     def test_happy_path(self):
@@ -166,27 +192,39 @@ class PlanPipelineTests(unittest.TestCase):
 
 
 class SummarizeTests(unittest.TestCase):
+    def setUp(self):
+        models.clear_cache()
+
+    def tearDown(self):
+        models.clear_cache()
+
     def test_summarize_calls_summarizer(self):
         def transport(url, payload, api_key):
             self.assertEqual(payload["model"], SUMMARIZER.slug)
             return _reply("2 of 3 tasks succeeded.")
-        orch = Orchestrator("k", transport=transport)
+        orch = _orch("k", transport=transport)
         out = orch.summarize([{"label": "a", "status": "done"}])
         self.assertEqual(out, "2 of 3 tasks succeeded.")
 
 
 class TransportErrorTests(unittest.TestCase):
+    def setUp(self):
+        models.clear_cache()
+
+    def tearDown(self):
+        models.clear_cache()
+
     def test_transport_raising_propagates(self):
         def boom(url, payload, api_key):
             raise OrchestratorError("network down")
-        orch = Orchestrator("k", transport=boom)
+        orch = _orch("k", transport=boom)
         with self.assertRaises(OrchestratorError):
             orch.plan("anything")
 
     def test_unexpected_response_shape_raises(self):
         def weird(url, payload, api_key):
             return {"nope": True}
-        orch = Orchestrator("k", transport=weird)
+        orch = _orch("k", transport=weird)
         with self.assertRaises(OrchestratorError):
             orch.plan("anything")
 

@@ -129,6 +129,8 @@
   "log_ai_executing": "🤖  正在细化计划…",
   "log_ai_checking": "🤖  正在检查计划…",
   "log_ai_plan_ready": "🤖  计划已就绪 — 共 {n} 个任务。",
+  "log_ai_model_swapped": "AI 模型名单已调整 — {note}",
+  "log_ai_roster_unverified": "无法验证 AI 模型名单（{err}），改用内置默认值。",
   "log_ai_plan_error": "🤖  AI 规划失败：{err}",
   "ai_api_key_label": "OpenRouter API Key",
   "ai_api_key_placeholder": "sk-or-...",

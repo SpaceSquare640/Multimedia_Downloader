@@ -1,4 +1,4 @@
-# Multimedia Downloader — V4.3.8
+# Multimedia Downloader — V4.3.10
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Latest release](https://img.shields.io/github/v/release/SpaceSquare640/Multimedia_Downloader?sort=semver)](https://github.com/SpaceSquare640/Multimedia_Downloader/releases/latest)
@@ -54,9 +54,12 @@ the app.
 ## Using the AI Assistant
 
 > [!NOTE]
-> The AI Assistant runtime error in the 4.0.0 build is **fixed in v4.1** (the
-> planner/summarizer OpenRouter models had been delisted upstream and were
-> swapped for current free models).
+> The AI Assistant runtime error in the 4.0.0 build — caused by OpenRouter
+> retiring the free models it was pinned to — was patched in v4.1 by swapping
+> in replacements, and those were retired in turn. Since **v4.3.10** the
+> assistant checks its models against OpenRouter's live catalogue on first use
+> and substitutes an available free model automatically, so a retired model no
+> longer breaks it.
 
 1. Click the **✨ AI Assistant** button (or press `Ctrl/Cmd+K`).
 2. First time only: open **Settings** and paste your own
@@ -90,7 +93,7 @@ Official installers for every push tag are built and published automatically
 by GitHub Actions (see `.github/workflows/release.yml`) — you don't need to
 build locally to cut a release, just push a `vX.Y.Z` tag.
 
-Run the Python test suite: `python -m unittest discover -s tests` (63 tests).
+Run the Python test suite: `python -m unittest discover -s tests` (104 tests).
 
 ## Run as a web app (V4.1)
 

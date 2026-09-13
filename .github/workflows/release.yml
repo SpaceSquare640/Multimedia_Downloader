@@ -58,6 +58,38 @@ jobs:
             echo "matrix={\"platform\":[\"$only\"]}" >> "$GITHUB_OUTPUT"
           fi
 
+      # Verify the version BEFORE the release is created or anything is built.
+      # A wrong version here is stamped into the installers and shipped to
+      # users, so this is the last point at which it is still cheap to fix.
+      # Note the explicit `ref`: on workflow_dispatch the default checkout is
+      # the branch the run was started from, not the tag being released, so
+      # without this we would validate the wrong commit.
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ steps.tag.outputs.tag }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Check version consistency across project files
+        run: python scripts/check_version_consistency.py
+
+      # The files can agree with each other and still disagree with the tag
+      # being released -- e.g. tagging v4.3.10 on a commit that was never
+      # bumped past 4.3.9. Compare the two explicitly.
+      - name: Check the tag matches the project version
+        run: |
+          tag="${{ steps.tag.outputs.tag }}"
+          tag_version="${tag#v}"
+          file_version="$(python -c "import json;print(json.load(open('package.json'))['version'])")"
+          if [ "$tag_version" != "$file_version" ]; then
+            echo "::error::Tag '$tag' (version '$tag_version') does not match the project version '$file_version' -- bump the version files and re-tag, or tag the correct commit."
+            exit 1
+          fi
+          echo "Tag $tag matches project version $file_version."
+
       # Runs BEFORE any platform build starts, so there's no race between the
       # 3 parallel jobs over who creates the release. If a release for this
       # tag already exists (e.g. hand-crafted tri-lingual notes via

@@ -129,6 +129,8 @@
   "log_ai_executing": "🤖  Refining the plan…",
   "log_ai_checking": "🤖  Checking the plan…",
   "log_ai_plan_ready": "🤖  Plan ready — {n} task(s).",
+  "log_ai_model_swapped": "AI model roster adjusted — {note}",
+  "log_ai_roster_unverified": "Could not verify the AI model roster ({err}); using the built-in defaults.",
   "log_ai_plan_error": "🤖  AI planning failed: {err}",
   "ai_api_key_label": "OpenRouter API Key",
   "ai_api_key_placeholder": "sk-or-...",
