@@ -1,0 +1,73 @@
+name: AI model roster check
+
+# The AI assistant's four OpenRouter ids are free-tier models, and the free tier
+# churns: three rounds of retirement are on record, roughly one every two
+# months. resolve_roster() keeps the assistant working by substituting a live
+# model, so a retirement no longer breaks anything -- but it does mean every
+# user sees a substitution warning, running on whatever model happened to be
+# available rather than one picked for the role.
+#
+# This surfaces that drift on a schedule, so refreshing the defaults stays a
+# maintenance task instead of arriving as a user report. It only reads the
+# public catalogue (no API key) and needs no dependencies.
+
+on:
+  schedule:
+    # 06:00 UTC on the 1st of each month.
+    - cron: "0 6 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - id: check
+        name: Check whether the default models are still live
+        run: |
+          set +e
+          python scripts/check_ai_roster.py | tee roster.txt
+          echo "status=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+
+      # Exit 2 means the catalogue could not be read -- that says nothing about
+      # the roster, so it must not raise an issue. Report it and stop.
+      - name: Catalogue unreachable
+        if: steps.check.outputs.status == '2'
+        run: |
+          echo "::warning::Could not read the OpenRouter catalogue; roster state is unknown."
+
+      - name: Open an issue when defaults have been retired
+        if: steps.check.outputs.status == '1'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TITLE: "AI model roster: default OpenRouter ids have been retired"
+        run: |
+          # One open issue at a time -- a monthly job would otherwise file a
+          # duplicate every month until someone acts on it.
+          existing="$(gh issue list --state open --search "in:title \"$TITLE\"" \
+                        --json number --jq '.[0].number // empty')"
+          body="$(printf '%s\n\n%s\n```\n%s\n```\n\n%s\n' \
+            "The scheduled roster check found retired ids among the defaults in \`ai/models.py\`." \
+            "Report from \`scripts/check_ai_roster.py\`:" \
+            "$(cat roster.txt)" \
+            "The assistant keeps working meanwhile — \`resolve_roster()\` substitutes a live free model at runtime — but users see a substitution warning until the constants are refreshed. Run the script locally to see today's options.")"
+          if [ -n "$existing" ]; then
+            echo "Issue #$existing is already open; adding the latest report."
+            gh issue comment "$existing" --body "$body"
+          else
+            gh issue create --title "$TITLE" --body "$body"
+          fi
+
+      - name: Report when everything is live
+        if: steps.check.outputs.status == '0'
+        run: echo "All four defaults are still live."
