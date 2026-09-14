@@ -14,13 +14,10 @@ from typing import Iterable, Optional
 
 import yt_dlp
 
-#: Errors matching these substrings are transient (usually a stale signature /
-#: token from YouTube's extractor) and worth a fresh retry rather than an
-#: immediate failure.
-_TRANSIENT_ERROR_MARKERS = ("403", "Forbidden", "HTTP Error 5")
 _MAX_RETRIES = 2
 _RETRY_DELAY_S = 2
 
+from .errors import ErrorKind, classify, is_stale_tool
 from .formats import build_ydl_format_string, platform_headers
 from .options import (
     DownloadOptions,
@@ -136,12 +133,14 @@ class Downloader:
                 self.download_one(url)
                 return
             except Exception as e:
-                is_transient = any(m in str(e) for m in _TRANSIENT_ERROR_MARKERS)
+                is_transient = classify(e) is ErrorKind.TRANSIENT
                 if not is_transient or attempt == _MAX_RETRIES or self._stop:
                     # A 403 that survives every retry is almost always a stale
                     # extractor (YouTube rotates its player), not a transient
                     # blip -- point the user at updating rather than retrying.
-                    if is_transient and "403" in str(e):
+                    # That is the TRANSIENT -> STALE_TOOL transition: the same
+                    # exception means something different once retrying failed.
+                    if is_stale_tool(e):
                         self._log("warn", "log_hint_outdated", i=i, t=total)
                     raise
                 # Log before sleeping: otherwise the UI sits silent for the

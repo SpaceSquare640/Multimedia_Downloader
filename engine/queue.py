@@ -19,6 +19,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 from .converter import Converter
+from .errors import ErrorKind, classify
 from .downloader import Downloader
 from .options import ConvertJob, DownloadOptions, LogCallback
 from typing import Callable
@@ -43,6 +44,10 @@ class Task:
     label:    str = ""
     status:   str = "pending"   # pending | running | done | error | skipped
     error:    str = ""
+    #: str value of an :class:`engine.errors.ErrorKind`; "" while not failed.
+    #: Named error_kind, not kind -- ``kind`` above already means the task type
+    #: ("download"/"convert") and crosses the IPC boundary under that name.
+    error_kind: str = ""
     # download
     url:      Optional[str] = None
     options:  Optional[DownloadOptions] = None
@@ -127,7 +132,7 @@ class TaskQueue:
                 dl.download_one(task.url)
                 self._set_status(task, "done")
             except Exception as e:
-                self._set_status(task, "error", str(e))
+                self._set_status(task, "error", str(e), kind=classify(e))
 
         elif task.kind == CONVERT:
             if not task.src_path or not task.dst_path:
@@ -144,15 +149,21 @@ class TaskQueue:
             if job.status == "done":
                 self._set_status(task, "done")
             else:
+                # The Converter already classified it; carry that across rather
+                # than re-deriving it from the message it happened to record.
+                task.error_kind = job.error_kind
                 self._set_status(task, "error", job.error)
 
         else:
             self._set_status(task, "error", f"unknown task kind: {task.kind!r}")
 
-    def _set_status(self, task: Task, status: str, error: str = "") -> None:
+    def _set_status(self, task: Task, status: str, error: str = "",
+                    kind: ErrorKind | None = None) -> None:
         task.status = status
         if error:
             task.error = error
+        if kind is not None:
+            task.error_kind = kind.value
         if self.task_update_cb:
             self.task_update_cb(task)
 

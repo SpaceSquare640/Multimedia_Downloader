@@ -12,6 +12,7 @@ options     DownloadOptions / ConvertJob dataclasses + callback type aliases
 downloader  Downloader (yt-dlp)
 converter   Converter (ffmpeg)
 queue       Task / TaskQueue — mixed download+convert batches for the AI planner
+errors      ErrorKind + classify() — one place deciding what a failure means
 
 The names below form the stable public API; import from ``engine`` directly:
 
@@ -41,6 +42,7 @@ from .options import (
     LogCallback,
     ProgressCallback,
 )
+from .errors import ErrorKind, classify, is_stale_tool
 from .downloader import Downloader
 from .converter import Converter
 from .queue import (
@@ -62,6 +64,8 @@ __all__ = [
     # options / types
     "DownloadOptions", "ConvertJob",
     "LogCallback", "ProgressCallback", "ItemStartCallback", "JobUpdateCallback",
+    # errors
+    "ErrorKind", "classify", "is_stale_tool",
     # engine classes
     "Downloader", "Converter",
     # queue

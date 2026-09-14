@@ -52,11 +52,21 @@ class DownloadOptions:
 
 @dataclass
 class ConvertJob:
-    """One file in a conversion queue."""
+    """
+    One file in a conversion queue.
+
+    ``status`` is the lifecycle; ``error_kind`` is what went wrong and what to
+    do about it. They overlap on ``no_ffmpeg`` -- kept that way on purpose,
+    because the TUI and the tests read ``status`` and changing its values would
+    break them for no gain.
+    """
     src_path: str
     dst_path: str
     status:   str = "pending"   # pending | converting | done | error | no_ffmpeg
     error:    str = ""
+    #: str value of an :class:`engine.errors.ErrorKind`; "" while not failed.
+    #: Typed as str so this module stays dependency-free for the AI planner.
+    error_kind: str = ""
 
 
 # ─────────────────────────────────────────────────────────────────────────────

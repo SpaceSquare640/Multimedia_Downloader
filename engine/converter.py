@@ -13,6 +13,7 @@ import os
 import subprocess
 from typing import Iterable, Optional
 
+from .errors import ErrorKind, classify
 from .options import ConvertJob, JobUpdateCallback, LogCallback
 
 
@@ -82,13 +83,14 @@ class Converter:
             else:
                 raise RuntimeError(result.stderr[:300] or "ffmpeg error (no output)")
 
-        except FileNotFoundError:
+        except FileNotFoundError as e:
             self._log("err", "log_no_ffmpeg", i=index, t=total)
-            self._set_status(job, "no_ffmpeg", error="ffmpeg not found")
+            self._set_status(job, "no_ffmpeg", error="ffmpeg not found",
+                             kind=classify(e))
 
         except Exception as e:
             self._log("err", "log_convert_error", i=index, t=total, err=str(e))
-            self._set_status(job, "error", error=str(e))
+            self._set_status(job, "error", error=str(e), kind=classify(e))
 
         return job
 
@@ -119,10 +121,13 @@ class Converter:
         return jobs
 
     # ── Internal ──────────────────────────────────────────────────────────────
-    def _set_status(self, job: ConvertJob, status: str, error: str = "") -> None:
+    def _set_status(self, job: ConvertJob, status: str, error: str = "",
+                    kind: ErrorKind | None = None) -> None:
         job.status = status
         if error:
             job.error = error
+        if kind is not None:
+            job.error_kind = kind.value
         if self.job_update_cb:
             self.job_update_cb(job)
 
