@@ -14,9 +14,6 @@ from typing import Iterable, Optional
 
 import yt_dlp
 
-_MAX_RETRIES = 2
-_RETRY_DELAY_S = 2
-
 from .errors import ErrorKind, classify, is_stale_tool
 from .formats import build_ydl_format_string, platform_headers
 from .options import (
@@ -25,6 +22,11 @@ from .options import (
     LogCallback,
     ProgressCallback,
 )
+
+#: How many extra attempts a transient failure gets, and how long to wait
+#: between them. Kept short: the delay is user-visible in the Run Log.
+_MAX_RETRIES = 2
+_RETRY_DELAY_S = 2
 
 
 class Downloader:

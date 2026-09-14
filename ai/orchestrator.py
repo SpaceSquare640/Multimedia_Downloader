@@ -64,7 +64,7 @@ Transport = Callable[[str, dict, str], dict]
 
 
 def _default_transport(url: str, payload: dict, api_key: str) -> dict:
-    req = urllib.request.Request(
+    req = urllib.request.Request(  # noqa: S310  (see justification below)
         url,
         data=json.dumps(payload).encode("utf-8"),
         headers={
@@ -74,7 +74,10 @@ def _default_transport(url: str, payload: dict, api_key: str) -> dict:
         method="POST",
     )
     try:
-        with urllib.request.urlopen(req, timeout=60) as resp:
+        # noqa justification: the URL is built from OPENROUTER_BASE_URL,
+        # a module constant pinned to https -- never from user input, so
+        # the file:/custom-scheme risk this rule guards against cannot arise.
+        with urllib.request.urlopen(req, timeout=60) as resp:  # noqa: S310
             return json.loads(resp.read().decode("utf-8"))
     except urllib.error.HTTPError as e:
         body = e.read().decode("utf-8", "replace")

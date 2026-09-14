@@ -12,6 +12,11 @@
 -r requirements-web.txt
 -r requirements-tui.txt
 
+# Linter. Pinned loosely: ruff moves fast and its default rule set has widened
+# between releases, so what CI enforces is set in ruff.toml rather than left to
+# whichever version happens to install.
+ruff
+
 # yt-dlp's optional extras. Not needed to run the tests, but installed so a
 # local run exercises the same yt-dlp code paths CI does.
 mutagen

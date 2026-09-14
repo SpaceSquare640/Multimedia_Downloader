@@ -71,7 +71,11 @@ class Converter:
         self._set_status(job, "converting")
 
         try:
-            result = subprocess.run(
+            # noqa justification: arguments are passed as a list with no
+            # shell=True, so nothing here is parsed by a shell -- a path
+            # containing spaces or metacharacters is one argv entry, not a
+            # command. ffmpeg_bin comes from the app, not from user input.
+            result = subprocess.run(  # noqa: S603
                 [self.ffmpeg_bin, "-y", "-i", job.src_path,
                  "-loglevel", "error", job.dst_path],
                 capture_output=True, text=True,

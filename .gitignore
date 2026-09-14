@@ -19,6 +19,9 @@ target/
 src-tauri/target/
 src-tauri/gen/
 
+# Linter cache
+.ruff_cache/
+
 # Packaging build artifacts (PyInstaller output — large, regenerable)
 packaging/dist/
 packaging/build/

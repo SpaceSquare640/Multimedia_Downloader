@@ -53,7 +53,7 @@ class ConvertBatchSummaryTests(unittest.TestCase):
             ffmpeg_bin="___definitely_not_a_real_ffmpeg___",
         )
         conv.convert_batch(["a%d.mkv" % i for i in range(n)])
-        return [l for l in logs if l[1].startswith("log_all_")]
+        return [line for line in logs if line[1].startswith("log_all_")]
 
     def test_all_fail_logs_error_not_ok(self):
         summary = self._batch_summary()
@@ -72,7 +72,7 @@ class ConvertBatchSummaryTests(unittest.TestCase):
         # Stop right after the first job runs; jobs 2 and 3 stay "pending".
         conv.job_update_cb = lambda j: conv.stop() if j.status != "converting" else None
         conv.convert_batch(["a.mkv", "b.mkv", "c.mkv"])
-        summary = [l for l in logs if l[1].startswith("log_all_")]
+        summary = [line for line in logs if line[1].startswith("log_all_")]
         self.assertEqual(len(summary), 1)
         # Only the one job that ran is counted -- not all three.
         self.assertEqual(summary[0][2], {"t": 1})

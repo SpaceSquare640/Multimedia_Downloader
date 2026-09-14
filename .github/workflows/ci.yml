@@ -30,6 +30,25 @@ jobs:
       - name: Check version consistency
         run: python scripts/check_version_consistency.py
 
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      # Python was the only language here without a linter -- Rust has clippy,
+      # the frontend has svelte-check. Rules live in ruff.toml, not in this
+      # file, so a local run and CI cannot disagree about what is enforced.
+      - name: Install ruff
+        run: pip install ruff
+
+      - name: ruff check
+        run: ruff check .
+
   python-tests:
     runs-on: ubuntu-latest
     steps:

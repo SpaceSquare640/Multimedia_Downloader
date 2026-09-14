@@ -1,0 +1,34 @@
+# Ruff configuration.
+#
+# Python was the only language here without a linter: Rust has clippy and the
+# frontend has svelte-check, but the engine, sidecar, web backend, CLI and TUI
+# had tests and nothing else. This closes that gap.
+
+# Not checked: the frontend (TypeScript), the Rust shell, and build output.
+exclude = [
+    "frontend",
+    "node_modules",
+    "src-tauri",
+    "packaging/build",
+    "packaging/dist",
+    ".pytest_cache",
+]
+
+# Documents the house style rather than enforcing it -- E501 is deliberately
+# not selected below. 99% of lines are already under 92 characters.
+line-length = 100
+
+[lint]
+# Ruff's own default (E4 imports, E7 statements, E9 syntax, F pyflakes) plus
+# S, flake8-bandit's security rules.
+#
+# E1/E2/E5 -- whitespace and line length -- are left out on purpose. Those are
+# a formatter's job, and this project has no formatter; enforcing them through
+# the linter would flag 73 existing lines and buy nothing. Add a formatter
+# first if that ever seems worth doing.
+select = ["E4", "E7", "E9", "F", "S"]
+
+[lint.per-file-ignores]
+# assert is how unittest expresses itself; S101 is aimed at production code
+# using assert for validation, which is stripped under `python -O`.
+"tests/*" = ["S101"]

@@ -3,7 +3,6 @@ import _path  # noqa: F401  (sys.path shim)
 
 import os
 import tempfile
-import time
 import unittest
 from unittest.mock import patch
 
@@ -27,7 +26,7 @@ def _fake_download_batch(self, urls):
 class TuiTests(unittest.IsolatedAsyncioTestCase):
     async def test_app_starts_with_three_tabs(self):
         app = MultimediaDownloaderApp(i18n.Translator("en"))
-        async with app.run_test() as pilot:
+        async with app.run_test():
             self.assertIsNotNone(app.query_one(DownloadTab))
             self.assertIsNotNone(app.query_one(ConvertTab))
             self.assertIsNotNone(app.query_one(LogTab))
@@ -42,7 +41,7 @@ class TuiTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_convert_add_and_remove_file(self):
         app = MultimediaDownloaderApp(i18n.Translator("en"))
-        async with app.run_test() as pilot:
+        async with app.run_test():
             cv = app.query_one(ConvertTab)
             cv.query_one("#file-paths").text = "clip.mkv"
             cv._add_files()
@@ -52,7 +51,7 @@ class TuiTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_convert_add_multiple_files_at_once(self):
         app = MultimediaDownloaderApp(i18n.Translator("en"))
-        async with app.run_test() as pilot:
+        async with app.run_test():
             cv = app.query_one(ConvertTab)
             cv.query_one("#file-paths").text = "a.mkv\nb.mov\n\nc.mp4"
             cv._add_files()
@@ -61,7 +60,7 @@ class TuiTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_convert_duplicate_paths_get_independent_rows(self):
         app = MultimediaDownloaderApp(i18n.Translator("en"))
-        async with app.run_test() as pilot:
+        async with app.run_test():
             cv = app.query_one(ConvertTab)
             cv.query_one("#file-paths").text = "dup.mkv\ndup.mkv"
             cv._add_files()
@@ -138,7 +137,7 @@ class TuiTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_log_export_writes_a_file(self):
         app = MultimediaDownloaderApp(i18n.Translator("en"))
-        async with app.run_test() as pilot:
+        async with app.run_test():
             lg = app.query_one(LogTab)
             app.log_line("ok", "log_all_done", t=1)
             with tempfile.TemporaryDirectory() as tmp:

@@ -77,12 +77,15 @@ _MAX_ALTERNATES = 3
 
 def _default_catalog_fetch() -> list[dict]:
     """Fetch the public model catalogue. Raises on any network/parse failure."""
-    req = urllib.request.Request(
+    # noqa justification: the URL is built from OPENROUTER_BASE_URL, a module
+    # constant pinned to https -- never from user input, so the file:/custom-
+    # scheme risk this rule guards against cannot arise here.
+    req = urllib.request.Request(  # noqa: S310
         f"{OPENROUTER_BASE_URL}/models",
         headers={"Accept": "application/json"},
         method="GET",
     )
-    with urllib.request.urlopen(req, timeout=20) as resp:
+    with urllib.request.urlopen(req, timeout=20) as resp:  # noqa: S310
         doc = json.loads(resp.read().decode("utf-8"))
     data = doc.get("data")
     if not isinstance(data, list):
