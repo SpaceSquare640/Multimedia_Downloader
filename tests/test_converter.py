@@ -78,5 +78,36 @@ class ConvertBatchSummaryTests(unittest.TestCase):
         self.assertEqual(summary[0][2], {"t": 1})
 
 
+
+class DstFormatValidationTests(unittest.TestCase):
+    """
+    make_job() validates dst_fmt because that is where the destination path is
+    assembled. A caller that checks its inputs and then hands them to a
+    function which composes a path from them has only moved the problem.
+    Checking here covers every frontend at once.
+    """
+
+    def test_bare_extension_accepted(self):
+        job = Converter(save_path="out", dst_fmt="mp4").make_job("a.mkv")
+        self.assertTrue(job.dst_path.endswith("a.mp4"))
+
+    def test_traversal_rejected(self):
+        with self.assertRaises(ValueError):
+            Converter(save_path="out", dst_fmt="../../evil.mp4").make_job("a.mkv")
+
+    def test_separators_rejected(self):
+        for bad in ("a/b", r"a\b"):
+            with self.assertRaises(ValueError):
+                Converter(save_path="out", dst_fmt=bad).make_job("a.mkv")
+
+    def test_empty_rejected(self):
+        with self.assertRaises(ValueError):
+            Converter(save_path="out", dst_fmt="").make_job("a.mkv")
+
+    def test_error_names_the_expected_shape(self):
+        with self.assertRaises(ValueError) as ctx:
+            Converter(save_path="out", dst_fmt="x/y").make_job("a.mkv")
+        self.assertIn("bare extension", str(ctx.exception))
+
 if __name__ == "__main__":
     unittest.main()

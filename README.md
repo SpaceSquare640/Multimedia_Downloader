@@ -1,4 +1,4 @@
-# Multimedia Downloader — V4.3.10
+# Multimedia Downloader — V4.3.11
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Latest release](https://img.shields.io/github/v/release/SpaceSquare640/Multimedia_Downloader?sort=semver)](https://github.com/SpaceSquare640/Multimedia_Downloader/releases/latest)
@@ -97,7 +97,7 @@ Run the Python test suite:
 
 ```bash
 pip install -r requirements-dev.txt          # what CI installs, in one file
-python -m unittest discover -s tests         # 118 tests
+python -m unittest discover -s tests         # 148 tests
 ```
 
 ## Run as a web app (V4.1)
@@ -124,7 +124,9 @@ web_app:app`, and add your own auth if exposing it beyond localhost.
 
 Paths sent by the browser are confined to that downloads folder, and a request
 pointing outside it is rejected with HTTP 400 — otherwise anyone who can reach
-the server could read and write files anywhere on it. Set
+the server could read and write files anywhere on it. The requested output
+format is checked too, since it is concatenated into the output path and would
+otherwise steer it straight back out of the folder. Set
 `MMDL_ALLOW_ABSOLUTE_PATHS=1` to lift the restriction when you are running it
 locally for yourself and want to save elsewhere on the machine.
 

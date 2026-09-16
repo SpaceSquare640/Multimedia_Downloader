@@ -40,6 +40,7 @@ import threading
 from flask import Flask, Response, jsonify, request, send_from_directory
 
 import i18n
+from engine import AUDIO_FORMATS, BROWSERS, VIDEO_FORMATS
 from engine_sidecar import Sidecar
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -121,6 +122,23 @@ def _save_path(value) -> str:
     return p if ALLOW_ABSOLUTE_PATHS else _confine(p)
 
 
+def _choice(value, allowed, field: str, default: str) -> str:
+    """
+    Validate a client-supplied value against the engine's own catalogue.
+
+    Blank falls back to the default; anything else must be a known value. These
+    fields look harmless, but `dst_fmt` is concatenated into the output path
+    downstream, so an unchecked one is a path-traversal vector that never
+    touches `_confine()`.
+    """
+    v = (value or "").strip()
+    if not v:
+        return default
+    if v not in allowed:
+        raise UnsafePath(f"unknown {field}: {v!r}")
+    return v
+
+
 def _confine_all(paths) -> list[str]:
     """Confine a list of client-supplied file paths (conversion inputs)."""
     if ALLOW_ABSOLUTE_PATHS:
@@ -142,9 +160,15 @@ def _confine_tasks(tasks) -> list[dict]:
     out = []
     for t in tasks or []:
         t = dict(t)
-        if isinstance(t.get("options"), dict) and t["options"].get("save_path"):
+        if isinstance(t.get("options"), dict):
             opts = dict(t["options"])
-            opts["save_path"] = _confine(opts["save_path"])
+            # cookie_file is a server-side path like save_path is. Confining one
+            # and not the other let a task point yt-dlp at any readable file and
+            # ship what it parsed to an attacker-chosen URL -- and the file most
+            # likely to be there is exactly the cookies.txt worth stealing.
+            for key in ("save_path", "cookie_file"):
+                if opts.get(key):
+                    opts[key] = _confine(opts[key])
             t["options"] = opts
         for key in ("src_path", "dst_path"):
             if t.get(key):
@@ -184,7 +208,7 @@ def api_download():
             "video_fmt": a.get("video_fmt", "mp4"),
             "audio_fmt": a.get("audio_fmt", "mp3"),
             "quality": a.get("quality", "best"),
-            "browser": a.get("browser", "none"),
+            "browser": _choice(a.get("browser"), set(BROWSERS), "browser", "none"),
         },
     }
     return _dispatch("download", args)
@@ -195,7 +219,8 @@ def api_convert():
     a = request.get_json(force=True) or {}
     args = {
         "files": _confine_all(a.get("files")),
-        "dst_fmt": a.get("dst_fmt", "mp4"),
+        "dst_fmt": _choice(a.get("dst_fmt"), set(VIDEO_FORMATS) | set(AUDIO_FORMATS),
+                           "output format", "mp4"),
         "save_path": _save_path(a.get("save_path")),
     }
     return _dispatch("convert", args)

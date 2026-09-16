@@ -108,6 +108,84 @@ class ConfineTests(unittest.TestCase):
 
 
 @unittest.skipIf(web_app is None, "flask not installed")
+class FormatAndBrowserTests(unittest.TestCase):
+    """
+    `dst_fmt` is concatenated into the output path downstream, so an unchecked
+    one escapes the confined directory without ever passing through _confine().
+    That is exactly how the first version of this confinement was bypassed.
+    """
+
+    def setUp(self):
+        self._saved = web_app.ALLOW_ABSOLUTE_PATHS
+        web_app.ALLOW_ABSOLUTE_PATHS = False
+
+    def tearDown(self):
+        web_app.ALLOW_ABSOLUTE_PATHS = self._saved
+
+    def _fmt(self, value):
+        from engine import AUDIO_FORMATS, VIDEO_FORMATS
+        return web_app._choice(value, set(VIDEO_FORMATS) | set(AUDIO_FORMATS),
+                               "output format", "mp4")
+
+    def test_known_formats_accepted(self):
+        for fmt in ("mp4", "mkv", "mp3", "flac"):
+            self.assertEqual(self._fmt(fmt), fmt)
+
+    def test_blank_falls_back_to_default(self):
+        self.assertEqual(self._fmt(""), "mp4")
+        self.assertEqual(self._fmt(None), "mp4")
+
+    def test_traversal_in_format_rejected(self):
+        # The original bypass: dst_fmt steered the output path.
+        with self.assertRaises(web_app.UnsafePath):
+            self._fmt("../../../../Windows/Temp/evil.mp4")
+
+    def test_separators_in_format_rejected(self):
+        for bad in ("a/b", r"a\b", "sub/x.mp4"):
+            with self.assertRaises(web_app.UnsafePath):
+                self._fmt(bad)
+
+    def test_unknown_format_rejected(self):
+        with self.assertRaises(web_app.UnsafePath):
+            self._fmt("exe")
+
+    def test_unknown_browser_rejected(self):
+        with self.assertRaises(web_app.UnsafePath):
+            web_app._choice("../etc", {"none", "chrome"}, "browser", "none")
+
+
+@unittest.skipIf(web_app is None, "flask not installed")
+class CookieFileTests(unittest.TestCase):
+    """cookie_file is a server-side path like save_path, and the file most
+    likely to be there is the one worth stealing."""
+
+    def setUp(self):
+        self._saved = web_app.ALLOW_ABSOLUTE_PATHS
+        web_app.ALLOW_ABSOLUTE_PATHS = False
+
+    def tearDown(self):
+        web_app.ALLOW_ABSOLUTE_PATHS = self._saved
+
+    def test_cookie_file_is_confined(self):
+        got = web_app._confine_tasks([{
+            "kind": "download", "url": "u",
+            "options": {"save_path": "out", "cookie_file": "jar.txt"}}])
+        self.assertTrue(got[0]["options"]["cookie_file"].startswith(
+            os.path.realpath(web_app.DOWNLOADS_DIR)))
+
+    def test_cookie_file_outside_rejected(self):
+        outside = r"C:\secret.txt" if os.name == "nt" else "/etc/passwd"
+        with self.assertRaises(web_app.UnsafePath):
+            web_app._confine_tasks([{
+                "kind": "download", "url": "u",
+                "options": {"save_path": "out", "cookie_file": outside}}])
+
+    def test_task_without_options_still_handled(self):
+        got = web_app._confine_tasks([{"kind": "download", "url": "u"}])
+        self.assertEqual(len(got), 1)
+
+
+@unittest.skipIf(web_app is None, "flask not installed")
 class EndpointTests(unittest.TestCase):
     """A rejected path must read as a client error, not a server crash."""
 
@@ -125,6 +203,11 @@ class EndpointTests(unittest.TestCase):
                              json={"files": ["../../etc/passwd"], "dst_fmt": "mp4"})
         self.assertEqual(r.status_code, 400)
         self.assertIn("outside", r.get_json()["error"])
+
+    def test_convert_with_escaping_format_returns_400(self):
+        r = self.client.post("/api/convert",
+                             json={"files": ["a.mkv"], "dst_fmt": "../../x.mp4"})
+        self.assertEqual(r.status_code, 400)
 
     def test_run_queue_with_escaping_path_returns_400(self):
         r = self.client.post("/api/run_queue", json={"tasks": [

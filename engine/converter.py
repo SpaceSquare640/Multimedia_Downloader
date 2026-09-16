@@ -10,11 +10,18 @@ The ffmpeg executable name is parameterised for testability / portability.
 from __future__ import annotations
 
 import os
+import re
 import subprocess
 from typing import Iterable, Optional
 
 from .errors import ErrorKind, classify
 from .options import ConvertJob, JobUpdateCallback, LogCallback
+
+
+#: A destination format is a bare extension -- no separators, no dots, no
+#: traversal. Anything else means the caller is trying to steer the output path
+#: through the format field.
+_VALID_FMT = re.compile(r"[A-Za-z0-9]{1,8}")
 
 
 class Converter:
@@ -52,7 +59,25 @@ class Converter:
         self._stop = True
 
     def make_job(self, src: str) -> ConvertJob:
-        """Build a :class:`ConvertJob` mapping ``src`` to a dst in ``save_path``."""
+        """
+        Build a :class:`ConvertJob` mapping ``src`` to a dst in ``save_path``.
+
+        ``dst_fmt`` is validated here rather than by the caller because this is
+        where the destination path is actually assembled. A caller that checks
+        its inputs and then hands them to a function that composes a path from
+        them has only moved the problem: the web backend confined `save_path`
+        and the source list, and a `dst_fmt` of "../../x.mp4" still walked out
+        of the confined directory, because the escape was assembled after the
+        check. Validate where the path is built, not where it is received.
+
+        Every frontend goes through here, so one check covers desktop, web,
+        CLI, TUI and Termux alike.
+        """
+        if not _VALID_FMT.fullmatch(self.dst_fmt or ""):
+            raise ValueError(
+                f"invalid output format {self.dst_fmt!r}: expected a bare "
+                "extension such as 'mp4' or 'mp3'"
+            )
         base = os.path.splitext(os.path.basename(src))[0]
         return ConvertJob(
             src_path=src,

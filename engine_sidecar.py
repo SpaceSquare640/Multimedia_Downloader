@@ -207,12 +207,24 @@ class Sidecar:
         return {"stopping": True}
 
     # ── Helpers ─────────────────────────────────────────────────────────────────
-    @staticmethod
-    def _task_from_dict(d: dict) -> Task:
+    #: Keys accepted inside a task's ``options``. Anything else is ignored.
+    #: Expanding the client's dict with ``**`` meant an unknown key raised
+    #: TypeError deep in the engine and surfaced as a 500 -- a malformed request
+    #: reported as a server fault. It also made the accepted surface implicit,
+    #: which is the wrong default for a field that arrives over the network.
+    _DOWNLOAD_OPTION_KEYS = (
+        "save_path", "mode", "video_fmt", "audio_fmt", "quality",
+        "cookie_file", "browser",
+    )
+
+    @classmethod
+    def _task_from_dict(cls, d: dict) -> Task:
         kind = d.get("kind")
         if kind == "download":
+            raw = d.get("options") or {}
+            opts = {k: raw[k] for k in cls._DOWNLOAD_OPTION_KEYS if k in raw}
             return Task(kind="download", label=d.get("label", ""),
-                        url=d.get("url"), options=DownloadOptions(**d["options"]))
+                        url=d.get("url"), options=DownloadOptions(**opts))
         if kind == "convert":
             return Task(kind="convert", label=d.get("label", ""),
                         src_path=d.get("src_path"), dst_path=d.get("dst_path"))

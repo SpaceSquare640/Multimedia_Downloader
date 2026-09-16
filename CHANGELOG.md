@@ -10,6 +10,23 @@
 
 ## English
 
+### [4.3.11] — 2026-09-16
+
+#### Security
+- **The web app no longer lets a browser read or write arbitrary files on the server.** Every path arriving in a request — the download and convert save locations, the conversion input list, the cookie file, and the paths inside an AI-planned task list — was passed to the engine as given. On a server reachable beyond localhost that let any client write wherever the process could write, read back any media file on the host by converting it into the downloads folder, and point yt-dlp at any readable file as a cookie jar. Paths are now resolved inside `MMDL_DOWNLOADS` and rejected with HTTP 400 when they fall outside it, with both sides resolved through `realpath` first so a symlink planted in the downloads folder cannot be used to escape. Set `MMDL_ALLOW_ABSOLUTE_PATHS=1` to restore the previous behaviour, which is what a single-user localhost run wants. The desktop app is unaffected — it does not go through this backend.
+- **The output format is validated where the output path is built.** Confining the save location was not enough on its own: the destination path is assembled from the save location, the source filename and the requested format, so a format of `../../x.mp4` walked straight out of the confined directory without the confinement ever seeing it. The web backend now accepts only formats from the engine's own catalogue, and `Converter.make_job()` rejects anything that is not a bare extension — a check at the point where the path is composed, which therefore covers the desktop, CLI, TUI and Termux frontends as well as the web one.
+- Unknown keys in an AI task's options are ignored rather than raising, so a malformed request is answered as a client error instead of surfacing as a server fault.
+
+#### Fixed
+- **A retired OpenRouter model no longer breaks the AI Assistant.** The roster is checked against the live catalogue on first use and any retired id is replaced with an available free model; substitutions appear in the plan's warnings. This is the third round of that churn, so the defaults are now treated as a starting point rather than a promise.
+- **The release build no longer fails when an ffmpeg download arrives corrupted.** Both the Linux and macOS steps verify the archive before trusting it and fall through to a second source where one exists, instead of failing several steps later inside `tar`/`unzip`. The macOS step additionally checks the binary's architecture, which stops a wrong-architecture ffmpeg from being packaged and shipped — a failure that would otherwise reach users rather than the build.
+
+#### Changed
+- Engine failures are classified in one place (`engine/errors.py`) instead of matching substrings of error messages at each call site, so an upstream reword surfaces as a failing test rather than as retries quietly no longer happening.
+
+#### Maintenance
+- CI gained a version-consistency check across the six files that carry the version number, and `ruff` linting for Python — previously the only language here without one. A scheduled job reports when the AI Assistant's default models go stale. Test suite: 104 → 148.
+
 ### [4.3.10] — 2026-09-13
 
 #### Fixed
