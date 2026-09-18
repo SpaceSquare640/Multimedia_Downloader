@@ -153,6 +153,22 @@ class FormatAndBrowserTests(unittest.TestCase):
         with self.assertRaises(web_app.UnsafePath):
             web_app._choice("../etc", {"none", "chrome"}, "browser", "none")
 
+    def test_download_format_catalogues_are_the_engine_s(self):
+        # The web layer must not be narrower or wider than what the engine
+        # accepts, or one of them is wrong.
+        from engine import AUDIO_FORMATS, QUALITY_PRESETS, VIDEO_FORMATS
+        for fmt in VIDEO_FORMATS:
+            self.assertEqual(
+                web_app._choice(fmt, set(VIDEO_FORMATS), "video format", "mp4"),
+                fmt)
+        for fmt in AUDIO_FORMATS:
+            self.assertEqual(
+                web_app._choice(fmt, set(AUDIO_FORMATS), "audio format", "mp3"),
+                fmt)
+        for q in QUALITY_PRESETS:
+            self.assertEqual(
+                web_app._choice(q, set(QUALITY_PRESETS), "quality", "best"), q)
+
 
 @unittest.skipIf(web_app is None, "flask not installed")
 class CookieFileTests(unittest.TestCase):
@@ -213,6 +229,20 @@ class EndpointTests(unittest.TestCase):
         r = self.client.post("/api/run_queue", json={"tasks": [
             {"kind": "convert", "src_path": "../../x.mkv", "dst_path": "x.mp4"}]})
         self.assertEqual(r.status_code, 400)
+
+    def test_download_format_fields_return_400(self):
+        # /api/download feeds video_fmt into yt-dlp's merge_output_format --
+        # which decides %(ext)s, and so the output path -- and feeds video_fmt
+        # and quality into the format-selector string. The engine rejects these
+        # too; checking here only turns a 500 into a 400.
+        for field, bad in (("video_fmt", "../../x"),
+                           ("audio_fmt", "../../x"),
+                           ("quality", "0]/all[height>0"),
+                           ("mode", "../../x")):
+            with self.subTest(field=field):
+                r = self.client.post("/api/download",
+                                     json={"urls": ["u"], field: bad})
+                self.assertEqual(r.status_code, 400)
 
 
 if __name__ == "__main__":

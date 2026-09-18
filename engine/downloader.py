@@ -15,7 +15,14 @@ from typing import Iterable, Optional
 import yt_dlp
 
 from .errors import ErrorKind, classify, is_stale_tool
-from .formats import build_ydl_format_string, platform_headers
+from .formats import (
+    AUDIO_FORMATS,
+    QUALITY_PRESETS,
+    VIDEO_FORMATS,
+    build_ydl_format_string,
+    ensure_known,
+    platform_headers,
+)
 from .options import (
     DownloadOptions,
     ItemStartCallback,
@@ -174,11 +181,17 @@ class Downloader:
         if headers:
             base["http_headers"] = headers
 
+        # Validated here, in the branch that consumes them, because this is
+        # where they are composed into the output template and the format
+        # selector -- the same reason Converter.make_job() validates dst_fmt.
+        # Only the fields this mode actually uses are checked, so a caller that
+        # leaves the other mode's field blank is not punished for it.
         if o.mode == "video":
-            fmt = o.video_fmt
+            fmt = ensure_known(o.video_fmt, VIDEO_FORMATS, "video format")
+            quality = ensure_known(o.quality, QUALITY_PRESETS, "quality preset")
             return {
                 **base,
-                "format":              build_ydl_format_string(o.quality, fmt),
+                "format":              build_ydl_format_string(quality, fmt),
                 "merge_output_format": fmt,
             }
 
@@ -188,7 +201,8 @@ class Downloader:
             "format": "bestaudio/best",
             "postprocessors": [{
                 "key":              "FFmpegExtractAudio",
-                "preferredcodec":   o.audio_fmt,
+                "preferredcodec":   ensure_known(o.audio_fmt, AUDIO_FORMATS,
+                                                 "audio format"),
                 "preferredquality": "192",
             }],
         }

@@ -40,7 +40,7 @@ import threading
 from flask import Flask, Response, jsonify, request, send_from_directory
 
 import i18n
-from engine import AUDIO_FORMATS, BROWSERS, VIDEO_FORMATS
+from engine import AUDIO_FORMATS, BROWSERS, QUALITY_PRESETS, VIDEO_FORMATS
 from engine_sidecar import Sidecar
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -204,10 +204,16 @@ def api_download():
         "urls": a.get("urls", []),
         "options": {
             "save_path": _save_path(a.get("save_path")),
-            "mode": a.get("mode", "video"),
-            "video_fmt": a.get("video_fmt", "mp4"),
-            "audio_fmt": a.get("audio_fmt", "mp3"),
-            "quality": a.get("quality", "best"),
+            "mode": _choice(a.get("mode"), {"video", "audio"}, "mode", "video"),
+            # The engine rejects these too -- that is the check that actually
+            # protects the CLI, TUI and desktop app. Repeating it here only
+            # buys a 400 instead of a 500 for a malformed request.
+            "video_fmt": _choice(a.get("video_fmt"), set(VIDEO_FORMATS),
+                                 "video format", "mp4"),
+            "audio_fmt": _choice(a.get("audio_fmt"), set(AUDIO_FORMATS),
+                                 "audio format", "mp3"),
+            "quality": _choice(a.get("quality"), set(QUALITY_PRESETS),
+                               "quality preset", "best"),
             "browser": _choice(a.get("browser"), set(BROWSERS), "browser", "none"),
         },
     }

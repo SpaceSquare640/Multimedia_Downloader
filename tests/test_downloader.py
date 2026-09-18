@@ -2,7 +2,13 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 import _path  # noqa: F401
-from engine import DownloadOptions, Downloader
+from engine import (
+    AUDIO_FORMATS,
+    QUALITY_PRESETS,
+    VIDEO_FORMATS,
+    DownloadOptions,
+    Downloader,
+)
 
 
 def _make_downloader(**cbs) -> Downloader:
@@ -121,6 +127,65 @@ class RetryTests(unittest.TestCase):
         keys = [c.args[1] for c in log_cb.call_args_list]
         self.assertNotIn("log_item_retry", keys)
         self.assertNotIn("log_hint_outdated", keys)
+
+
+class FormatValidationTests(unittest.TestCase):
+    """
+    `video_fmt` becomes yt-dlp's `merge_output_format`, which decides the
+    `%(ext)s` in the output template -- so it helps compose the destination
+    path, exactly like `dst_fmt` does for conversion. `video_fmt` and `quality`
+    are also interpolated into the format-selector string. All three arrive
+    from the network on the web backend, so `_build_ydl_opts` is the point that
+    has to reject them.
+    """
+
+    def _opts(self, **kw) -> Downloader:
+        return Downloader(DownloadOptions(save_path=".", **kw))
+
+    # ── the allowed cases still work ────────────────────────────────────────
+    def test_known_video_format_and_quality_accepted(self):
+        got = self._opts(mode="video", video_fmt="mkv", quality="720p") \
+            ._build_ydl_opts("https://example.com/v")
+        self.assertEqual(got["merge_output_format"], "mkv")
+        self.assertIn("height<=720", got["format"])
+
+    def test_known_audio_format_accepted(self):
+        got = self._opts(mode="audio", audio_fmt="flac") \
+            ._build_ydl_opts("https://example.com/v")
+        self.assertEqual(got["postprocessors"][0]["preferredcodec"], "flac")
+
+    def test_every_catalogued_format_survives(self):
+        # The check must not be narrower than the catalogue the UIs offer.
+        for fmt in VIDEO_FORMATS:
+            self._opts(mode="video", video_fmt=fmt)._build_ydl_opts("u")
+        for fmt in AUDIO_FORMATS:
+            self._opts(mode="audio", audio_fmt=fmt)._build_ydl_opts("u")
+        for q in QUALITY_PRESETS:
+            self._opts(mode="video", quality=q)._build_ydl_opts("u")
+
+    # ── the rejected cases ──────────────────────────────────────────────────
+    def test_traversal_in_video_format_rejected(self):
+        with self.assertRaises(ValueError):
+            self._opts(mode="video", video_fmt="../../../../Windows/Temp/evil") \
+                ._build_ydl_opts("u")
+
+    def test_selector_injection_in_quality_rejected(self):
+        # Raw interpolation into the yt-dlp format selector, e.g.
+        # bestvideo[height<=0]/all[height>0]+bestaudio
+        with self.assertRaises(ValueError):
+            self._opts(mode="video", quality="0]/all[height>0") \
+                ._build_ydl_opts("u")
+
+    def test_unknown_audio_format_rejected(self):
+        with self.assertRaises(ValueError):
+            self._opts(mode="audio", audio_fmt="../x.sh")._build_ydl_opts("u")
+
+    def test_unused_field_of_the_other_mode_is_not_checked(self):
+        # Audio mode never touches video_fmt, so a junk value there must not
+        # break an otherwise valid request.
+        got = self._opts(mode="audio", audio_fmt="mp3", video_fmt="") \
+            ._build_ydl_opts("u")
+        self.assertEqual(got["postprocessors"][0]["preferredcodec"], "mp3")
 
 
 if __name__ == "__main__":

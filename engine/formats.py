@@ -70,6 +70,27 @@ def build_ydl_format_string(quality: str, fmt: str) -> str:
     )
 
 
+def ensure_known(value: str, allowed: list[str], field: str) -> str:
+    """
+    Return ``value`` if it is in ``allowed``, else raise :class:`ValueError`.
+
+    These fields are not cosmetic. ``video_fmt`` becomes yt-dlp's
+    ``merge_output_format``, which decides the ``%(ext)s`` in the output
+    template -- so it helps compose the destination path. ``video_fmt`` and
+    ``quality`` are also interpolated into the yt-dlp format-selector string
+    built by :func:`build_ydl_format_string`, where an unchecked value is
+    selector-syntax injection rather than a container name.
+
+    Lives here, next to the catalogues it validates against, so that adding a
+    format to ``VIDEO_FORMATS`` cannot silently leave the check behind.
+    """
+    if value not in allowed:
+        raise ValueError(
+            f"unknown {field} {value!r}: expected one of {', '.join(allowed)}"
+        )
+    return value
+
+
 def is_douyin(url: str) -> bool:
     return "douyin.com" in url or "v.douyin.com" in url
 
