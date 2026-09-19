@@ -2,7 +2,7 @@
 """
 Fail if the project's version number disagrees across the files that carry it.
 
-The version lives in six places. Bumping a release means editing all of them by
+The version lives in seven places. Bumping a release means editing all of them by
 hand, and that has already gone wrong: `src-tauri/Cargo.toml` was left at 4.3.8
 through the entire 4.3.9 release because nobody noticed the miss. A stale
 Cargo.toml is what stamps the version into the built binary, so the installer
@@ -60,6 +60,12 @@ def collect() -> dict[str, str]:
         "README.md (title)": _search("README.md", r"^#\s+Multimedia Downloader\s+—\s+V(\S+)"),
         # Newest CHANGELOG entry, e.g. `### [4.3.10] — 2026-09-13`
         "CHANGELOG.md (newest entry)": _search("CHANGELOG.md", r"^###\s+\[([^\]]+)\]"),
+        # Nothing reads this one, which is exactly why it rotted: it sat at
+        # "4.0.0-dev" through every 4.x release. An unread constant with no
+        # mechanism watching it is the same failure as Cargo.toml, minus the
+        # symptom that eventually gave Cargo.toml away.
+        "engine/__init__.py": _search("engine/__init__.py",
+                                      r'^__version__\s*=\s*"([^"]+)"'),
     }
 
 
