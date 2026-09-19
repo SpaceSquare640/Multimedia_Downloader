@@ -13,6 +13,7 @@ import os
 import tempfile
 import unittest
 
+import _deps
 import _path  # noqa: F401  — puts the project root on sys.path
 
 # web_app reads MMDL_DOWNLOADS at import time, so point it somewhere disposable
@@ -20,13 +21,11 @@ import _path  # noqa: F401  — puts the project root on sys.path
 _TMP = tempfile.mkdtemp(prefix="mmdl-test-")
 os.environ["MMDL_DOWNLOADS"] = _TMP
 
-try:
-    import web_app
-except ImportError:  # pragma: no cover - flask missing (see requirements-web.txt)
-    web_app = None
+# Missing flask is an error, not a silent skip: these are the tests that pin
+# the path confinement, and a run without them still printed OK.
+web_app = _deps.require("web_app", "requirements-web.txt")
 
 
-@unittest.skipIf(web_app is None, "flask not installed")
 class ConfineTests(unittest.TestCase):
     def setUp(self):
         # Each test starts from the secure default, whatever the environment
@@ -107,7 +106,6 @@ class ConfineTests(unittest.TestCase):
         self.assertEqual(web_app._confine_all([outside]), [outside])
 
 
-@unittest.skipIf(web_app is None, "flask not installed")
 class FormatAndBrowserTests(unittest.TestCase):
     """
     `dst_fmt` is concatenated into the output path downstream, so an unchecked
@@ -170,7 +168,6 @@ class FormatAndBrowserTests(unittest.TestCase):
                 web_app._choice(q, set(QUALITY_PRESETS), "quality", "best"), q)
 
 
-@unittest.skipIf(web_app is None, "flask not installed")
 class CookieFileTests(unittest.TestCase):
     """cookie_file is a server-side path like save_path, and the file most
     likely to be there is the one worth stealing."""
@@ -201,7 +198,6 @@ class CookieFileTests(unittest.TestCase):
         self.assertEqual(len(got), 1)
 
 
-@unittest.skipIf(web_app is None, "flask not installed")
 class EndpointTests(unittest.TestCase):
     """A rejected path must read as a client error, not a server crash."""
 

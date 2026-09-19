@@ -97,8 +97,13 @@ Run the Python test suite:
 
 ```bash
 pip install -r requirements-dev.txt          # what CI installs, in one file
-python -m unittest discover -s tests         # 148 tests
+python -m unittest discover -s tests         # 161 tests
 ```
+
+Install that file first — the suite does not skip tests whose dependencies are
+missing, it fails and tells you what to install. A skipped test reports as
+success, so a partial run would otherwise print `OK` and mean nothing. To run
+only part of the suite, name the module: `python -m unittest tests.test_engine`.
 
 ## Run as a web app (V4.1)
 
