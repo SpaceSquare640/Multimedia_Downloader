@@ -81,8 +81,27 @@ jobs:
               README.md CHANGELOG.md engine/__init__.py
             git commit -m "chore: release $tag after PR #${PR_NUMBER}" \
               -m "$marker"
+
+            # Another PR can merge after checkout but before this push. Rebase
+            # onto the new Source_Code tip and retry to preserve that merge.
+            pushed=false
+            for attempt in 1 2 3 4 5; do
+              if git push origin HEAD:Source_Code; then
+                pushed=true
+                break
+              fi
+
+              echo "Push attempt ${attempt} was rejected; rebasing onto the latest Source_Code tip."
+              git fetch origin +refs/heads/Source_Code:refs/remotes/origin/Source_Code --tags
+              git rebase origin/Source_Code
+              python scripts/check_version_consistency.py
+            done
+            if [ "$pushed" != "true" ]; then
+              echo "::error::Could not push the release commit after five attempts."
+              exit 1
+            fi
+
             git tag "$tag"
-            git push origin HEAD:Source_Code
             git push origin "refs/tags/$tag"
           fi
 
