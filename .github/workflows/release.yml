@@ -73,7 +73,7 @@ jobs:
       # Note the explicit `ref`: on workflow_dispatch the default checkout is
       # the branch the run was started from, not the tag being released, so
       # without this we would validate the wrong commit.
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           ref: ${{ steps.tag.outputs.tag }}
 
@@ -126,7 +126,7 @@ jobs:
     runs-on: ${{ matrix.platform }}
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           ref: ${{ needs.setup.outputs.tag }}
 
