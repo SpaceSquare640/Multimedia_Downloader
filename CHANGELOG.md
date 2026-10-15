@@ -20,6 +20,8 @@
 - Updated the frontend package metadata and documentation to match the current
   application; synchronized both npm lockfile versions and included them in the
   consistency check.
+- Paused Dependabot TypeScript 7 updates for the frontend until `svelte-check`
+  supports that major version.
 
 ### [4.3.11] — 2026-09-16
 

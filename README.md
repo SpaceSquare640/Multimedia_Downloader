@@ -89,6 +89,10 @@ npm run tauri dev           # compile + run in dev mode (needs Python 3.8+, Rust
 npm run tauri build         # build an installer locally, if you want one without waiting for CI
 ```
 
+The frontend's TypeScript major version is kept within the range supported by
+`svelte-check`; Dependabot updates to TypeScript 7 are paused until that peer
+dependency supports it.
+
 Official installers for every push tag are built and published automatically
 by GitHub Actions (see `.github/workflows/release.yml`) — you don't need to
 build locally to cut a release, just push a `vX.Y.Z` tag.
