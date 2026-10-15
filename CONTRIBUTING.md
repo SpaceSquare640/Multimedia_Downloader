@@ -1,7 +1,7 @@
 # Contributing
 
-Thanks for your interest in improving Multimedia Downloader! This repo uses a
-single `main` branch; releases are cut as tags (`vX.Y.Z`).
+Thanks for your interest in improving Multimedia Downloader! The default branch
+is `Source_Code`; releases are cut as tags (`vX.Y.Z`).
 
 ## Project layout
 
@@ -29,13 +29,13 @@ npm run build:frontend:web && npm run web
 - **Frontend types:** `npm run check` (svelte-check, 0 errors/warnings).
 - **i18n:** if you add user-facing strings, add the key to all three
   `locales/*.json` files.
-- **Changelog:** note user-facing changes under a new/unreleased section in
-  `CHANGELOG.md` (tri-lingual).
+- **Changelog:** note user-facing changes under the Unreleased section in
+  `CHANGELOG.md`. New entries are written in English.
 - Keep changes focused and match the surrounding code style.
 
 ## Commit / PR
 
-Open a PR against `main` with a clear description of what and why. Small,
+Open a PR against `Source_Code` with a clear description of what and why. Small,
 reviewable PRs are easier to merge. See the PR template for the checklist.
 
 ## Reporting bugs / requesting features

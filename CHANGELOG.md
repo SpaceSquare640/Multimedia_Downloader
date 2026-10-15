@@ -10,6 +10,17 @@
 
 ## English
 
+### Unreleased
+
+#### Maintenance
+- Added weekly Dependabot updates for npm, pip, Cargo, and GitHub Actions.
+- Run CI on pushes and pull requests for every branch, with a manual trigger.
+- Use lockfile-based `npm ci` installs in CI and release builds.
+- Updated contributor guidance for the renamed default branch.
+- Updated the frontend package metadata and documentation to match the current
+  application; synchronized both npm lockfile versions and included them in the
+  consistency check.
+
 ### [4.3.11] — 2026-09-16
 
 #### Security

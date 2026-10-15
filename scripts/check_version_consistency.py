@@ -2,7 +2,7 @@
 """
 Fail if the project's version number disagrees across the files that carry it.
 
-The version lives in seven places. Bumping a release means editing all of them by
+The version lives in ten places. Bumping a release means editing all of them by
 hand, and that has already gone wrong: `src-tauri/Cargo.toml` was left at 4.3.8
 through the entire 4.3.9 release because nobody noticed the miss. A stale
 Cargo.toml is what stamps the version into the built binary, so the installer
@@ -47,6 +47,9 @@ def collect() -> dict[str, str]:
     """Map each source to the version it declares."""
     return {
         "package.json": _json_version("package.json"),
+        "package-lock.json": _json_version("package-lock.json"),
+        "frontend/package.json": _json_version("frontend/package.json"),
+        "frontend/package-lock.json": _json_version("frontend/package-lock.json"),
         "src-tauri/tauri.conf.json": _json_version("src-tauri/tauri.conf.json"),
         # [package] version — the first `version = "..."` in the file, which sits
         # above any [dependencies] section.

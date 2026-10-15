@@ -4,8 +4,8 @@ name: Release build
 # to the matching GitHub Release. Triggers on a version tag push (v*), or run
 # manually against an existing tag via the "Run workflow" button.
 #
-# To ship a new version: bump the version numbers + CHANGELOG on `main`, then
-# create and push a `vX.Y.Z` tag (`git tag vX.Y.Z && git push origin vX.Y.Z`).
+# To ship a new version, bump the version numbers and CHANGELOG on `Source_Code`,
+# then create and push a `vX.Y.Z` tag (`git tag vX.Y.Z && git push origin vX.Y.Z`).
 # That's it — no local build required. This workflow creates the GitHub
 # Release automatically if one doesn't already exist for the tag (with
 # GitHub's auto-generated notes as a placeholder) and uploads all 3
@@ -284,8 +284,8 @@ jobs:
 
       - name: Install JS dependencies
         run: |
-          npm install --no-audit --no-fund
-          npm install --no-audit --no-fund --prefix frontend
+          npm ci --no-audit --no-fund
+          npm ci --no-audit --no-fund --prefix frontend
 
       - name: Build the Tauri app
         uses: tauri-apps/tauri-action@v0

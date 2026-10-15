@@ -1,0 +1,49 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: Asia/Hong_Kong
+    open-pull-requests-limit: 5
+
+  - package-ecosystem: npm
+    directory: "/frontend"
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: Asia/Hong_Kong
+    open-pull-requests-limit: 5
+
+  - package-ecosystem: pip
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: Asia/Hong_Kong
+    open-pull-requests-limit: 5
+
+  - package-ecosystem: pip
+    directory: "/engine"
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: Asia/Hong_Kong
+    open-pull-requests-limit: 5
+
+  - package-ecosystem: cargo
+    directory: "/src-tauri"
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: Asia/Hong_Kong
+    open-pull-requests-limit: 5
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: Asia/Hong_Kong
+    open-pull-requests-limit: 5

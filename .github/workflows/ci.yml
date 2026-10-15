@@ -1,15 +1,20 @@
 name: CI
 
-# Fast correctness gate that runs on every push/PR to main -- separate from
-# release.yml, which only builds/ships installers on a version tag and never
-# runs any of these checks. Catches regressions before they can reach a
-# tagged release.
+# Fast correctness gate for every branch and pull request. Release packaging is
+# handled separately by release.yml when a version tag is pushed.
 
 on:
   push:
-    branches: ["main"]
+    branches: ["**"]
   pull_request:
-    branches: ["main"]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
   version-consistency:
@@ -80,7 +85,7 @@ jobs:
           node-version: "22"
 
       - name: Install frontend dependencies
-        run: npm install --no-audit --no-fund --prefix frontend
+        run: npm ci --no-audit --no-fund --prefix frontend
 
       - name: svelte-check
         run: npm run check --prefix frontend
