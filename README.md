@@ -93,9 +93,15 @@ The frontend's TypeScript major version is kept within the range supported by
 `svelte-check`; Dependabot updates to TypeScript 7 are paused until that peer
 dependency supports it.
 
-Official installers for every push tag are built and published automatically
-by GitHub Actions (see `.github/workflows/release.yml`) — you don't need to
-build locally to cut a release, just push a `vX.Y.Z` tag.
+Every pull request merged into `Source_Code` automatically increments the
+patch version, creates and pushes the matching `vX.Y.Z` tag, and starts the
+three-platform release build. Put release notes under `Unreleased` in
+`CHANGELOG.md`; the release workflow promotes them to the new version entry.
+
+Official installers are built and published automatically by GitHub Actions
+(see `.github/workflows/auto-patch-release.yml` and
+`.github/workflows/release.yml`) — no local release build or manual tag is
+needed after a pull request is merged.
 
 Run the Python test suite:
 

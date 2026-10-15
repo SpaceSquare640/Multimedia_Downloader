@@ -22,6 +22,8 @@
   consistency check.
 - Paused Dependabot TypeScript 7 updates for the frontend until `svelte-check`
   supports that major version.
+- Automatically bump the patch version, create its tag, and start release builds
+  after each pull request merged into `Source_Code`.
 
 ### [4.3.11] — 2026-09-16
 

@@ -1,0 +1,84 @@
+name: Automatic patch release
+
+on:
+  # This write-enabled event runs only after a merge and checks out the base
+  # branch below; it never checks out or executes the PR head.
+  pull_request_target:
+    branches: [Source_Code]
+    types: [closed]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: automatic-patch-release-Source_Code
+  queue: max
+
+jobs:
+  bump:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.release.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: Source_Code
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Check current version consistency
+        run: python scripts/check_version_consistency.py
+
+      - name: Bump patch version and push tag
+        id: release
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          git fetch origin +refs/heads/Source_Code:refs/remotes/origin/Source_Code --tags
+          marker="Automatic patch release for merged PR #${PR_NUMBER}"
+          release_commit="$(git log origin/Source_Code --format='%H' --grep="$marker" -n 1)"
+
+          if [ -n "$release_commit" ]; then
+            tag="$(git tag --points-at "$release_commit" --list 'v*' | head -n 1)"
+            if [ -z "$tag" ]; then
+              subject="$(git show -s --format=%s "$release_commit")"
+              tag="$(printf '%s\n' "$subject" | sed -E 's/^chore: release (v[0-9]+\.[0-9]+\.[0-9]+) after PR #[0-9]+$/\1/')"
+              if [[ ! "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                echo "::error::Found the prior release commit for PR #${PR_NUMBER}, but could not recover its version tag."
+                exit 1
+              fi
+              git tag "$tag" "$release_commit"
+              git push origin "refs/tags/$tag"
+            fi
+            echo "PR #${PR_NUMBER} already has automatic release $tag; reusing it."
+          else
+            tag="$(python scripts/bump_patch_version.py --pr-number "$PR_NUMBER")"
+            python scripts/check_version_consistency.py
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add package.json package-lock.json frontend/package.json frontend/package-lock.json \
+              src-tauri/tauri.conf.json src-tauri/Cargo.toml src-tauri/Cargo.lock \
+              README.md CHANGELOG.md engine/__init__.py
+            git commit -m "chore: release $tag after PR #${PR_NUMBER}" \
+              -m "$marker"
+            git tag "$tag"
+            git push origin HEAD:Source_Code
+            git push origin "refs/tags/$tag"
+          fi
+
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+  release:
+    needs: bump
+    permissions:
+      contents: write
+    uses: ./.github/workflows/release.yml
+    with:
+      tag: ${{ needs.bump.outputs.tag }}
+      only: all

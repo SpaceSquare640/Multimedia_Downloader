@@ -2,11 +2,9 @@
 """
 Fail if the project's version number disagrees across the files that carry it.
 
-The version lives in ten places. Bumping a release means editing all of them by
-hand, and that has already gone wrong: `src-tauri/Cargo.toml` was left at 4.3.8
-through the entire 4.3.9 release because nobody noticed the miss. A stale
-Cargo.toml is what stamps the version into the built binary, so the installer
-would have reported the wrong version to users.
+The version lives in ten places. The automatic patch-release workflow updates
+them together; this check guards the source tree and release tag against drift.
+It also protects manual edits and future additions to the release process.
 
 Run it directly (`python scripts/check_version_consistency.py`) or let CI do it.
 Exits 0 when every source agrees, 1 otherwise, printing what disagreed.

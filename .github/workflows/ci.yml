@@ -35,6 +35,9 @@ jobs:
       - name: Check version consistency
         run: python scripts/check_version_consistency.py
 
+      - name: Validate automatic patch version bump
+        run: python scripts/bump_patch_version.py --pr-number 0 --dry-run
+
   lint:
     runs-on: ubuntu-latest
     steps:

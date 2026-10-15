@@ -1,7 +1,8 @@
 # Contributing
 
 Thanks for your interest in improving Multimedia Downloader! The default branch
-is `Source_Code`; releases are cut as tags (`vX.Y.Z`).
+is `Source_Code`; every merged pull request automatically increments the patch
+version, creates a `vX.Y.Z` tag, and starts the release build.
 
 ## Project layout
 
@@ -31,6 +32,8 @@ npm run build:frontend:web && npm run web
   `locales/*.json` files.
 - **Changelog:** note user-facing changes under the Unreleased section in
   `CHANGELOG.md`. New entries are written in English.
+- **Release:** the `Unreleased` notes are promoted automatically when your PR
+  merges into `Source_Code`; no manual version bump or tag is needed.
 - Keep changes focused and match the surrounding code style.
 
 ## Commit / PR

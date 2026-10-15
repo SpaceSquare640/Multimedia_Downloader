@@ -1,13 +1,11 @@
 name: Release build
 
 # Builds the desktop installers for Linux, macOS, and Windows and uploads them
-# to the matching GitHub Release. Triggers on a version tag push (v*), or run
-# manually against an existing tag via the "Run workflow" button.
-#
-# To ship a new version, bump the version numbers and CHANGELOG on `Source_Code`,
-# then create and push a `vX.Y.Z` tag (`git tag vX.Y.Z && git push origin vX.Y.Z`).
-# That's it — no local build required. This workflow creates the GitHub
-# Release automatically if one doesn't already exist for the tag (with
+# to the matching GitHub Release. It can run on a version tag push (v*), be
+# started manually against an existing tag, or be called by the automatic patch
+# release workflow after a pull request is merged into `Source_Code`.
+# This workflow creates the GitHub Release automatically if one doesn't
+# already exist for the tag (with
 # GitHub's auto-generated notes as a placeholder) and uploads all 3
 # platforms' installers to it. Polished tri-lingual release notes can be
 # added afterwards with `gh release edit vX.Y.Z --notes-file ...` — that's
@@ -31,12 +29,23 @@ on:
           - ubuntu-22.04
           - macos-14
           - windows-latest
+  workflow_call:
+    inputs:
+      tag:
+        description: "Version tag to build"
+        required: true
+        type: string
+      only:
+        description: "Limit the build to one platform (default: all)"
+        required: false
+        default: all
+        type: string
 
 permissions:
   contents: write
 
 concurrency:
-  group: release-${{ github.event.inputs.tag || github.ref_name }}
+  group: release-${{ inputs.tag || github.event.inputs.tag || github.ref_name }}
   cancel-in-progress: false
 
 jobs:
@@ -47,11 +56,11 @@ jobs:
       tag: ${{ steps.tag.outputs.tag }}
     steps:
       - id: tag
-        run: echo "tag=${{ github.event.inputs.tag || github.ref_name }}" >> "$GITHUB_OUTPUT"
+        run: echo "tag=${{ inputs.tag || github.event.inputs.tag || github.ref_name }}" >> "$GITHUB_OUTPUT"
 
       - id: m
         run: |
-          only="${{ github.event.inputs.only || 'all' }}"
+          only="${{ inputs.only || github.event.inputs.only || 'all' }}"
           if [ "$only" = "all" ]; then
             echo 'matrix={"platform":["ubuntu-22.04","macos-14","windows-latest"]}' >> "$GITHUB_OUTPUT"
           else
@@ -118,6 +127,8 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v5
+        with:
+          ref: ${{ needs.setup.outputs.tag }}
 
       - name: Set up Python
         uses: actions/setup-python@v6
