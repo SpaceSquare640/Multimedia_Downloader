@@ -10,4 +10,5 @@
 - Documented local development and the boundary between the mock UI and the real Multimedia Downloader application.
 - Validation: `npm install` completed with 0 reported vulnerabilities; `npm run build` completed successfully. Taste Skill static lint reports 0 FAIL and 9 WARN for outlined controls in the simulated app.
 - Status: initial site-only commit `da66c09` was pushed to `Multimedia_Downloader_Web_Preview` after replacing its previous source-code history; `Source_Code` was not changed.
-- Risk: GitHub Pages deployment status has not been verified; the repository Pages source may still need to be set to **GitHub Actions**.
+- Added `Multimedia_Downloader_Web_Preview` to the existing `github-pages` environment allowlist while preserving the `main` and `Source_Code` entries.
+- Validation: GitHub Actions run `38769734415` completed successfully for both build and deploy. The public Pages URL returned HTTP 200 with the expected page title.
