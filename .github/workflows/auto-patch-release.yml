@@ -22,7 +22,10 @@ concurrency:
 
 jobs:
   bump:
-    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.pull_request.merged == true &&
+      contains(github.event.pull_request.labels.*.name, 'release:patch'))
     runs-on: ubuntu-latest
     outputs:
       tag: ${{ steps.release.outputs.tag }}

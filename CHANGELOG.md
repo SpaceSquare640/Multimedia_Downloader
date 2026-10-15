@@ -12,6 +12,11 @@
 
 ### Unreleased
 
+#### Changed
+- Automatic patch releases now require the merged pull request to carry the
+  `release:patch` label. Dependabot auto-merges without that label skip release
+  dispatch.
+
 ### [4.3.20] — 2026-10-16
 
 #### Fixed

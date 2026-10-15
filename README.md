@@ -93,14 +93,18 @@ The frontend's TypeScript major version is kept within the range supported by
 `svelte-check`; Dependabot updates to TypeScript 7 are paused until that peer
 dependency supports it.
 
-Every pull request merged into `Source_Code` automatically increments the
-patch version, creates and pushes the matching `vX.Y.Z` tag, and starts the
-three-platform release build. If another pull request advances `Source_Code`
-while a release commit is being pushed, the workflow rebases that commit onto
-the new branch tip and retries. Dependabot groups minor and patch updates by
-ecosystem; its pull requests are merged automatically after the full CI
-workflow passes. Major updates remain separate pull requests and also require
-CI to pass before automatic merging. PRs that change files under
+Only pull requests merged into `Source_Code` with the `release:patch` label
+automatically increment the patch version, create and push the matching
+`vX.Y.Z` tag, and start the three-platform release build. Merged pull requests
+without that label do not create a release. The automatic release workflow can
+also be run manually for a merged pull request. If another pull request
+advances `Source_Code` while a release commit is being pushed, the workflow
+rebases that commit onto the new branch tip and retries. Dependabot groups
+minor and patch updates by ecosystem; its pull requests are merged
+automatically after the full CI workflow passes, but do not trigger a release
+unless they carry the `release:patch` label. Major updates remain separate
+pull requests and also require CI to pass before automatic merging. PRs that
+change files under
 `.github/workflows/` are left for manual merging because GitHub requires a
 separate Workflows permission to merge them. Put release notes under
 `Unreleased` in `CHANGELOG.md`; the release workflow promotes them to the new
@@ -109,7 +113,7 @@ version entry.
 Official installers are built and published automatically by GitHub Actions
 (see `.github/workflows/auto-patch-release.yml` and
 `.github/workflows/release.yml`) — no local release build or manual tag is
-needed after a pull request is merged.
+needed after a labeled pull request is merged.
 
 The `CI` workflow runs the existing source checks on pushes and pull requests.
 Every Monday at 00:17 UTC (08:17 Hong Kong time), it also runs those checks on
