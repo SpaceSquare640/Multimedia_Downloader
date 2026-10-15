@@ -12,6 +12,8 @@
 
 ### Unreleased
 
+### [4.3.12] — 2026-10-16
+
 #### Maintenance
 - Run the full source CI and check the preview branch build and published Pages
   URL every Monday at 00:17 UTC (08:17 Hong Kong time).
