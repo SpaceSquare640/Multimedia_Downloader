@@ -12,6 +12,11 @@
 
 ### Unreleased
 
+### [4.3.15] — 2026-10-16
+
+#### Maintenance
+- Automated patch release after merged pull request #25.
+
 ### [4.3.14] — 2026-10-16
 
 #### Maintenance
