@@ -21,7 +21,7 @@ The names below form the stable public API; import from ``engine`` directly:
 
 from __future__ import annotations
 
-__version__ = "4.3.13"
+__version__ = "4.3.14"
 
 from .formats import (
     AUDIO_FORMATS,
