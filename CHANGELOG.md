@@ -13,6 +13,8 @@
 ### Unreleased
 
 #### Maintenance
+- Run the full source CI and check the preview branch build and published Pages
+  URL every Monday at 00:17 UTC (08:17 Hong Kong time).
 - Added weekly Dependabot updates for npm, pip, Cargo, and GitHub Actions.
 - Run CI on pushes and pull requests for every branch, with a manual trigger.
 - Use lockfile-based `npm ci` installs in CI and release builds.

@@ -106,6 +106,12 @@ Official installers are built and published automatically by GitHub Actions
 `.github/workflows/release.yml`) — no local release build or manual tag is
 needed after a pull request is merged.
 
+The `CI` workflow runs the existing source checks on pushes and pull requests.
+Every Monday at 00:17 UTC (08:17 Hong Kong time), it also runs those checks on
+`Source_Code`, builds the `Multimedia_Downloader_Web_Preview` branch, and checks
+that the published GitHub Pages URL returns HTTP 200 with the expected page
+title. Schedule events run from the repository's default branch.
+
 Run the Python test suite:
 
 ```bash
