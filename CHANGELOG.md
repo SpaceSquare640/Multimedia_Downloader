@@ -12,6 +12,8 @@
 
 ### Unreleased
 
+### [4.3.20] — 2026-10-16
+
 #### Fixed
 - Rebase and retry the automatic patch-release commit when another merge
   advances `Source_Code` during the release workflow.
