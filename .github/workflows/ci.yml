@@ -8,6 +8,8 @@ on:
     branches: ["**"]
   pull_request:
   workflow_dispatch:
+  schedule:
+    - cron: "17 0 * * 1"
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -140,3 +142,34 @@ jobs:
       - name: cargo clippy
         working-directory: src-tauri
         run: cargo clippy --all-targets -- -D warnings
+
+  weekly-preview-health:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out preview branch
+        uses: actions/checkout@v5
+        with:
+          ref: Multimedia_Downloader_Web_Preview
+          path: preview
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: preview/package-lock.json
+
+      - name: Install preview dependencies
+        working-directory: preview
+        run: npm ci --no-audit --no-fund
+
+      - name: Build preview site
+        working-directory: preview
+        run: npm run build
+
+      - name: Check deployed Pages site
+        run: |
+          status="$(curl --fail --silent --show-error --location --retry 3 --retry-delay 10 --retry-connrefused --max-time 30 --output page.html --write-out '%{http_code}' https://spacesquare640.github.io/Multimedia_Downloader/)"
+          test "$status" = "200"
+          grep -Fq '<title>Multimedia Downloader — project field guide</title>' page.html
