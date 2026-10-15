@@ -24,6 +24,8 @@
   supports that major version.
 - Automatically bump the patch version, create its tag, and start release builds
   after each pull request merged into `Source_Code`.
+- Group Dependabot minor and patch updates by ecosystem, then merge its pull
+  requests automatically after the complete CI workflow passes.
 
 ### [4.3.11] — 2026-09-16
 

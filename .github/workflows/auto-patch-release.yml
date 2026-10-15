@@ -6,6 +6,12 @@ on:
   pull_request_target:
     branches: [Source_Code]
     types: [closed]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: Merged pull request number to release
+        required: true
+        type: number
 
 permissions:
   contents: write
@@ -16,7 +22,7 @@ concurrency:
 
 jobs:
   bump:
-    if: github.event.pull_request.merged == true
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     outputs:
       tag: ${{ steps.release.outputs.tag }}
@@ -37,9 +43,17 @@ jobs:
       - name: Bump patch version and push tag
         id: release
         env:
-          PR_NUMBER: ${{ github.event.pull_request.number }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ inputs.pr_number || github.event.pull_request.number }}
         run: |
           set -euo pipefail
+          merged_for_source_code="$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}" \
+            --jq '.merged_at != null and .base.ref == "Source_Code"')"
+          if [ "${merged_for_source_code}" != "true" ]; then
+            echo "::error::PR #${PR_NUMBER} is not merged into Source_Code."
+            exit 1
+          fi
+
           git fetch origin +refs/heads/Source_Code:refs/remotes/origin/Source_Code --tags
           marker="Automatic patch release for merged PR #${PR_NUMBER}"
           release_commit="$(git log origin/Source_Code --format='%H' --grep="$marker" -n 1)"

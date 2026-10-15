@@ -1,0 +1,45 @@
+name: Dependabot auto-merge
+
+# Merge only after the full CI workflow for a Dependabot PR has succeeded.
+# This privileged workflow uses API/CLI operations only and never checks out
+# or executes code from the pull request.
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+
+permissions:
+  actions: write
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Merge successful Dependabot PR and request its release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -euo pipefail
+          if [[ ! "${HEAD_SHA}" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "::error::The CI run did not provide a valid commit SHA."
+            exit 1
+          fi
+
+          pr_number="$(gh api "repos/${GH_REPO}/commits/${HEAD_SHA}/pulls" \
+            --jq ".[] | select(.state == \"open\" and .user.login == \"dependabot[bot]\" and .base.ref == \"Source_Code\" and .head.sha == \"${HEAD_SHA}\") | .number" \
+            | head -n 1)"
+          if [ -z "${pr_number}" ]; then
+            echo "No open Dependabot PR targeting Source_Code is associated with this successful CI run."
+            exit 0
+          fi
+
+          gh pr merge "${pr_number}" --squash
+          gh workflow run auto-patch-release.yml --ref Source_Code \
+            -f pr_number="${pr_number}"

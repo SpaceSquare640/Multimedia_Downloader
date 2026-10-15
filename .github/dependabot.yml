@@ -7,6 +7,13 @@ updates:
       day: monday
       timezone: Asia/Hong_Kong
     open-pull-requests-limit: 5
+    groups:
+      npm-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
 
   - package-ecosystem: npm
     directory: "/frontend"
@@ -18,6 +25,13 @@ updates:
     ignore:
       - dependency-name: "typescript"
         versions: [">= 7.0.0"]
+    groups:
+      frontend-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
 
   - package-ecosystem: pip
     directory: "/"
@@ -26,6 +40,13 @@ updates:
       day: monday
       timezone: Asia/Hong_Kong
     open-pull-requests-limit: 5
+    groups:
+      pip-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
 
   - package-ecosystem: pip
     directory: "/engine"
@@ -34,6 +55,13 @@ updates:
       day: monday
       timezone: Asia/Hong_Kong
     open-pull-requests-limit: 5
+    groups:
+      engine-pip-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
 
   - package-ecosystem: cargo
     directory: "/src-tauri"
@@ -42,6 +70,13 @@ updates:
       day: monday
       timezone: Asia/Hong_Kong
     open-pull-requests-limit: 5
+    groups:
+      cargo-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
 
   - package-ecosystem: github-actions
     directory: "/"
@@ -50,3 +85,10 @@ updates:
       day: monday
       timezone: Asia/Hong_Kong
     open-pull-requests-limit: 5
+    groups:
+      actions-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
