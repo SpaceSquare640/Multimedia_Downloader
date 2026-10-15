@@ -36,7 +36,8 @@ npm run build:frontend:web && npm run web
   merges into `Source_Code`; no manual version bump or tag is needed.
 - **Dependency updates:** Dependabot groups minor and patch updates by
   ecosystem. Dependabot PRs merge automatically after the complete CI workflow
-  passes; major updates remain separate PRs.
+  passes; major updates remain separate PRs. PRs that change files under
+  `.github/workflows/` require manual merging.
 - Keep changes focused and match the surrounding code style.
 
 ## Commit / PR

@@ -30,6 +30,7 @@
   after each pull request merged into `Source_Code`.
 - Group Dependabot minor and patch updates by ecosystem, then merge its pull
   requests automatically after the complete CI workflow passes.
+- Leave Dependabot PRs that modify GitHub Actions workflows for manual merging.
 
 ### [4.3.11] — 2026-09-16
 
