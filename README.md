@@ -95,7 +95,9 @@ dependency supports it.
 
 Every pull request merged into `Source_Code` automatically increments the
 patch version, creates and pushes the matching `vX.Y.Z` tag, and starts the
-three-platform release build. Dependabot groups minor and patch updates by
+three-platform release build. If another pull request advances `Source_Code`
+while a release commit is being pushed, the workflow rebases that commit onto
+the new branch tip and retries. Dependabot groups minor and patch updates by
 ecosystem; its pull requests are merged automatically after the full CI
 workflow passes. Major updates remain separate pull requests and also require
 CI to pass before automatic merging. PRs that change files under
