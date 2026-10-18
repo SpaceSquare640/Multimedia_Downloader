@@ -21,7 +21,7 @@
     "svelte": "^5.57.2",
     "svelte-check": "^4.7.2",
     "tailwindcss": "^4.3.2",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.3",
     "vite": "^8.3.4"
   },
   "dependencies": {
