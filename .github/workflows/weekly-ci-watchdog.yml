@@ -1,0 +1,131 @@
+name: Weekly CI Watchdog
+
+on:
+  schedule:
+    # Tuesday 20:00 Hong Kong time, allowing for delayed Monday schedules.
+    - cron: "0 12 * * 2"
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  issues: write
+
+concurrency:
+  group: weekly-ci-watchdog
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check the scheduled CI and preview health
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const marker = "<!-- weekly-ci-watchdog -->";
+            const maxAgeMs = 8 * 24 * 60 * 60 * 1000;
+            const findings = [];
+
+            const { data } = await github.rest.actions.listWorkflowRuns({
+              owner,
+              repo,
+              workflow_id: "ci.yml",
+              branch: "Source_Code",
+              event: "schedule",
+              per_page: 100,
+            });
+            const runs = data.workflow_runs.sort(
+              (a, b) => Date.parse(b.created_at) - Date.parse(a.created_at),
+            );
+            const latest = runs[0];
+
+            if (!latest) {
+              findings.push("No scheduled CI run was found for `Source_Code`.");
+            } else {
+              const ageMs = Date.now() - Date.parse(latest.created_at);
+              if (ageMs > maxAgeMs) {
+                findings.push(
+                  `The latest scheduled CI run is stale: [run #${latest.run_number}](${latest.html_url}), created ${latest.created_at}.`,
+                );
+              }
+              if (latest.status !== "completed") {
+                findings.push(
+                  `The latest scheduled CI run has status \`${latest.status}\`: [run #${latest.run_number}](${latest.html_url}).`,
+                );
+              } else if (latest.conclusion !== "success") {
+                findings.push(
+                  `The latest scheduled CI run concluded \`${latest.conclusion}\`: [run #${latest.run_number}](${latest.html_url}).`,
+                );
+              }
+
+              const jobs = await github.paginate(
+                github.rest.actions.listJobsForWorkflowRun,
+                { owner, repo, run_id: latest.id, per_page: 100 },
+              );
+              const previewHealth = jobs.find(
+                (job) => job.name === "weekly-preview-health",
+              );
+              if (!previewHealth) {
+                findings.push(
+                  `The latest scheduled CI run has no \`weekly-preview-health\` job: [run #${latest.run_number}](${latest.html_url}).`,
+                );
+              } else if (
+                previewHealth.status !== "completed" ||
+                previewHealth.conclusion !== "success"
+              ) {
+                findings.push(
+                  `The preview health job is \`${previewHealth.status}/${previewHealth.conclusion ?? "incomplete"}\`: [run #${latest.run_number}](${latest.html_url}).`,
+                );
+              }
+            }
+
+            const openIssues = await github.paginate(
+              github.rest.issues.listForRepo,
+              { owner, repo, state: "open", per_page: 100 },
+            );
+            const issue = openIssues.find(
+              (item) =>
+                !item.pull_request &&
+                item.user?.login === "github-actions[bot]" &&
+                item.body?.includes(marker),
+            );
+
+            if (findings.length === 0) {
+              await core.summary
+                .addHeading("Weekly CI watchdog")
+                .addRaw("Scheduled CI and preview health are current and successful.")
+                .write();
+              return;
+            }
+
+            const body = [
+              marker,
+              "## Weekly CI watchdog detected an issue",
+              "",
+              `Checked at ${new Date().toISOString()}.`,
+              "",
+              ...findings.map((finding) => `- ${finding}`),
+              "",
+              "This issue is updated by the weekly CI watchdog. The workflow does not change source code or close this issue automatically.",
+            ].join("\n");
+            const title = "[Automation] Weekly CI check needs attention";
+
+            if (issue) {
+              await github.rest.issues.update({
+                owner,
+                repo,
+                issue_number: issue.number,
+                title,
+                body,
+              });
+              core.warning(`Updated watchdog issue #${issue.number}.`);
+            } else {
+              const { data: created } = await github.rest.issues.create({
+                owner,
+                repo,
+                title,
+                body,
+              });
+              core.warning(`Created watchdog issue ${created.html_url}.`);
+            }

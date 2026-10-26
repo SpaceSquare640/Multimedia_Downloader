@@ -17,6 +17,10 @@
   `release:patch` label. Dependabot auto-merges without that label skip release
   dispatch.
 
+#### Maintenance
+- Add weekly CI and Dependabot watchdogs that open or update a GitHub issue
+  when scheduled checks are missing or fail.
+
 ### [4.3.20] — 2026-10-16
 
 #### Fixed

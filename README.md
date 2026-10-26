@@ -121,6 +121,14 @@ Every Monday at 00:17 UTC (08:17 Hong Kong time), it also runs those checks on
 that the published GitHub Pages URL returns HTTP 200 with the expected page
 title. Schedule events run from the repository's default branch.
 
+On Tuesdays at 12:00 and 12:15 UTC (20:00 and 20:15 Hong Kong time), the
+`Weekly CI Watchdog` and `Weekly Dependabot Watchdog` workflows check that the
+scheduled CI, preview health, dependency update scans, and open Dependabot PR
+checks completed successfully. Each workflow creates or updates one GitHub
+issue when its checks are missing or fail. These watchdogs report problems;
+they do not change source code, update dependencies, merge pull requests, or
+close their issues automatically.
+
 Run the Python test suite:
 
 ```bash

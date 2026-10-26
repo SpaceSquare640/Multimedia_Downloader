@@ -1,0 +1,193 @@
+name: Weekly Dependabot Watchdog
+
+on:
+  schedule:
+    # Tuesday 20:15 Hong Kong time, after the weekly update window.
+    - cron: "15 12 * * 2"
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  issues: write
+  pull-requests: read
+
+concurrency:
+  group: weekly-dependabot-watchdog
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Dependabot scans and open pull requests
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const marker = "<!-- weekly-dependabot-watchdog -->";
+            const maxAgeMs = 8 * 24 * 60 * 60 * 1000;
+            const findings = [];
+            const expectedScans = [
+              ["root npm", "npm_and_yarn in / - Update #"],
+              ["frontend npm", "npm_and_yarn in /frontend - Update #"],
+              ["root pip", "pip in / - Update #"],
+              ["engine pip", "pip in /engine - Update #"],
+              ["Cargo", "cargo in /src-tauri - Update #"],
+              ["GitHub Actions", "github_actions in / - Update #"],
+            ];
+
+            const updateRuns = await github.paginate(
+              github.rest.actions.listWorkflowRunsForRepo,
+              {
+                owner,
+                repo,
+                branch: "Source_Code",
+                event: "dynamic",
+                per_page: 100,
+              },
+            );
+            const dependabotRuns = updateRuns.filter(
+              (run) => run.path?.startsWith("dynamic/dependabot/"),
+            );
+
+            for (const [label, prefix] of expectedScans) {
+              const matching = dependabotRuns
+                .filter((run) => run.name?.startsWith(prefix))
+                .sort(
+                  (a, b) => Date.parse(b.created_at) - Date.parse(a.created_at),
+                );
+              const latest = matching[0];
+              if (!latest) {
+                findings.push(
+                  `Could not confirm a recent Dependabot scan for ${label}; no matching update run was found. Check the Dependabot run naming if GitHub changed it.`,
+                );
+                continue;
+              }
+
+              if (Date.now() - Date.parse(latest.created_at) > maxAgeMs) {
+                findings.push(
+                  `The ${label} Dependabot scan is stale: [run #${latest.run_number}](${latest.html_url}), created ${latest.created_at}.`,
+                );
+              }
+              if (latest.status !== "completed") {
+                findings.push(
+                  `The ${label} Dependabot scan has status \`${latest.status}\`: [run #${latest.run_number}](${latest.html_url}).`,
+                );
+              } else if (latest.conclusion !== "success") {
+                findings.push(
+                  `The ${label} Dependabot scan concluded \`${latest.conclusion}\`: [run #${latest.run_number}](${latest.html_url}).`,
+                );
+              }
+            }
+
+            const pullRequests = await github.paginate(
+              github.rest.pulls.list,
+              { owner, repo, state: "open", base: "Source_Code", per_page: 100 },
+            );
+            const dependabotPullRequests = pullRequests.filter(
+              (pullRequest) => pullRequest.user?.login === "dependabot[bot]",
+            );
+
+            for (const pullRequest of dependabotPullRequests) {
+              let { data } = await github.rest.actions.listWorkflowRunsForRepo({
+                owner,
+                repo,
+                head_sha: pullRequest.head.sha,
+                event: "pull_request",
+                per_page: 100,
+              });
+              let ciRuns = data.workflow_runs
+                .filter((run) => run.name === "CI")
+                .sort(
+                  (a, b) => Date.parse(b.created_at) - Date.parse(a.created_at),
+                );
+
+              // Pull-request workflow runs can use GitHub's merge-ref SHA,
+              // which differs from the PR head SHA. Fall back to its branch.
+              if (ciRuns.length === 0) {
+                ({ data } = await github.rest.actions.listWorkflowRunsForRepo({
+                  owner,
+                  repo,
+                  branch: pullRequest.head.ref,
+                  event: "pull_request",
+                  per_page: 100,
+                }));
+                ciRuns = data.workflow_runs
+                  .filter(
+                    (run) =>
+                      run.name === "CI" &&
+                      run.head_branch === pullRequest.head.ref,
+                  )
+                  .sort(
+                    (a, b) =>
+                      Date.parse(b.created_at) - Date.parse(a.created_at),
+                  );
+              }
+              const latest = ciRuns[0];
+
+              if (!latest) {
+                findings.push(
+                  `Dependabot PR [#${pullRequest.number}](${pullRequest.html_url}) has no CI run for its current head commit.`,
+                );
+              } else if (latest.status !== "completed") {
+                findings.push(
+                  `CI for Dependabot PR [#${pullRequest.number}](${pullRequest.html_url}) is \`${latest.status}\`: [run #${latest.run_number}](${latest.html_url}).`,
+                );
+              } else if (latest.conclusion !== "success") {
+                findings.push(
+                  `CI for Dependabot PR [#${pullRequest.number}](${pullRequest.html_url}) concluded \`${latest.conclusion}\`: [run #${latest.run_number}](${latest.html_url}).`,
+                );
+              }
+            }
+
+            const openIssues = await github.paginate(
+              github.rest.issues.listForRepo,
+              { owner, repo, state: "open", per_page: 100 },
+            );
+            const issue = openIssues.find(
+              (item) =>
+                !item.pull_request &&
+                item.user?.login === "github-actions[bot]" &&
+                item.body?.includes(marker),
+            );
+
+            if (findings.length === 0) {
+              await core.summary
+                .addHeading("Weekly Dependabot watchdog")
+                .addRaw(
+                  `All six update scans succeeded; CI is current for ${dependabotPullRequests.length} open Dependabot pull request(s).`,
+                )
+                .write();
+              return;
+            }
+
+            const body = [
+              marker,
+              "## Dependabot watchdog detected an issue",
+              "",
+              `Checked at ${new Date().toISOString()}.`,
+              "",
+              ...findings.map((finding) => `- ${finding}`),
+              "",
+              "This issue is updated by the weekly Dependabot watchdog. The workflow does not change dependencies, merge pull requests, or close this issue automatically.",
+            ].join("\n");
+            const title = "[Automation] Dependabot maintenance needs attention";
+
+            if (issue) {
+              await github.rest.issues.update({
+                owner,
+                repo,
+                issue_number: issue.number,
+                title,
+                body,
+              });
+              core.warning(`Updated watchdog issue #${issue.number}.`);
+            } else {
+              const { data: created } = await github.rest.issues.create({
+                owner,
+                repo,
+                title,
+                body,
+              });
+              core.warning(`Created watchdog issue ${created.html_url}.`);
+            }
