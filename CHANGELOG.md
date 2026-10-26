@@ -13,6 +13,12 @@
 ### Unreleased
 
 #### Changed
+- Set the current software code license to PolyForm Noncommercial 1.0.0, updated
+  the frontend package and lockfile metadata and README, and retained
+  third-party license notices. Earlier copies published with MIT terms remain
+  under their original grants. (OpenAI-Codex)
+- Validation: frontend package metadata parsed, official PolyForm text matched,
+  and `git diff --check` passed. (OpenAI-Codex)
 - Automatic patch releases now require the merged pull request to carry the
   `release:patch` label. Dependabot auto-merges without that label skip release
   dispatch.

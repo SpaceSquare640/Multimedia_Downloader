@@ -1,10 +1,26 @@
 # Multimedia Downloader — V4.3.20
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![License: PolyForm Noncommercial 1.0.0](https://img.shields.io/badge/License-PolyForm%20Noncommercial%201.0.0-blue.svg)](LICENSE)
 [![Latest release](https://img.shields.io/github/v/release/SpaceSquare640/Multimedia_Downloader?sort=semver)](https://github.com/SpaceSquare640/Multimedia_Downloader/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/SpaceSquare640/Multimedia_Downloader/total)](https://github.com/SpaceSquare640/Multimedia_Downloader/releases)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS%20%7C%20Web-blue)](#run-as-a-web-app-v41)
 [![Built with](https://img.shields.io/badge/built%20with-Tauri%20·%20Svelte%20·%20Python-6E56CF)](#project-layout)
+
+## License
+
+Copyright (c) Kingsley.
+
+The original Multimedia Downloader software code is source-available under the
+[PolyForm Noncommercial License 1.0.0](LICENSE). This license does not grant
+commercial use. Third-party components keep their respective terms; see their
+accompanying notices, including
+[`third-party/LICENSE-ffmpeg-GPLv3.txt`](third-party/LICENSE-ffmpeg-GPLv3.txt).
+
+Earlier copies distributed with an MIT license remain subject to the terms
+granted with those copies. This change applies to the current project
+distribution and does not revoke earlier grants.
+
+<!-- OpenAI-Codex: added the current software-license notice and attribution. -->
 
 A cross-platform multimedia downloader & format converter built on top of
 [yt-dlp](https://github.com/yt-dlp/yt-dlp) and `ffmpeg`, with an AI assistant
