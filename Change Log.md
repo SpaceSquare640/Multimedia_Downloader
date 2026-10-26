@@ -1,5 +1,12 @@
 # Change Log
 
+## 2026-10-26
+
+- Applied PolyForm Noncommercial 1.0.0 to the website code and CC BY-NC-SA 4.0 to original website content, with copyright credited to Kingsley.
+- Preserved the SIL Open Font License 1.1 notices for League Spartan and Figtree.
+- Replaced source-availability copy in English, Traditional Chinese, and Simplified Chinese and added visible links to both project licenses.
+- Validation: `npm run build`, package metadata parsing, official license text comparisons, and `git diff --check` passed. (OpenAI-Codex)
+
 ## 2026-10-16
 
 - Created an independent Svelte 5 and Vite project for the `Multimedia_Downloader_Web_Preview` branch.

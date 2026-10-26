@@ -2,6 +2,8 @@
   "name": "multimedia-downloader-web-preview",
   "private": true,
   "version": "1.0.0",
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "x-codex-signature": "OpenAI-Codex",
   "type": "module",
   "scripts": {
     "dev": "vite",

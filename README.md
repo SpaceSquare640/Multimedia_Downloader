@@ -10,6 +10,16 @@ An original, multilingual project guide and browser-only mock application for Mu
 - Responsive app preview with sample progress and fictional outputs.
 - Self-hosted League Spartan and Figtree variable fonts under the SIL Open Font License 1.1.
 
+## Copyright and licenses
+
+Copyright (c) Kingsley.
+
+- Website code is source-available under the [PolyForm Noncommercial License 1.0.0](LICENSE).
+- Original website text, translations, and visuals are licensed under [CC BY-NC-SA 4.0](LICENSE-CONTENT.txt).
+- Third-party materials are excluded from those project licenses and retain their own terms. The bundled League Spartan and Figtree fonts remain under SIL Open Font License 1.1; see [Third-Party Notices](THIRD_PARTY_NOTICES.md).
+
+<!-- OpenAI-Codex: documented the separate code, content, and third-party licenses. -->
+
 The simulated app does not fetch media, access local files, call the Python engine, make API requests, or convert or download anything. Its URLs, filenames, progress, and activity records are generated examples. Use the real project for actual media workflows.
 
 ## Development

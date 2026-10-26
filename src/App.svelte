@@ -1,3 +1,4 @@
+<!-- OpenAI-Codex: updated license labels and three-language source-availability copy. -->
 <script lang="ts">
   import { onDestroy } from 'svelte';
 
@@ -8,8 +9,8 @@
   const copy = {
     en: {
       navProject: 'Project', navWorkflows: 'Workflows', navAbout: 'About', tryDemo: 'Try the demo', tryFlow: 'Try this flow',
-      title: 'A field guide to\nMultimedia Downloader.', intro: 'An open-source, cross-platform project for downloading and converting media. Explore its everyday workflows without installing anything.',
-      demoLabel: 'Interactive app preview', simulated: 'SIMULATION · LOCAL ONLY', fieldGuide: 'FIELD GUIDE', mediaTools: 'MEDIA TOOLS', openSource: 'Open source', inBrowser: 'IN THE BROWSER', localSimulation: 'LOCAL SIMULATION',
+      title: 'A field guide to\nMultimedia Downloader.', intro: 'A source-available, cross-platform project for downloading and converting media. Explore its everyday workflows without installing anything.',
+      demoLabel: 'Interactive app preview', simulated: 'SIMULATION · LOCAL ONLY', fieldGuide: 'FIELD GUIDE', mediaTools: 'MEDIA TOOLS', sourceAvailable: 'Source available', inBrowser: 'IN THE BROWSER', localSimulation: 'LOCAL SIMULATION',
       tabDownload: 'Download', tabConvert: 'Convert', tabAssistant: 'AI assistant', urlLabel: 'Media URL', urlPlaceholder: 'Paste a video or audio link', formatLabel: 'Output format', startDownload: 'Run sample download', startConvert: 'Run sample conversion', askAssistant: 'Draft a plan',
       queueTitle: 'Activity', queueEmpty: 'Your next example will appear here.', sampleTitle: 'Example item', sampleDetail: 'Sample media · 1080p', ready: 'Ready to preview', running: 'Simulating task…', complete: 'Example complete', output: 'Example output',
       expand: 'Open full view', close: 'Close full view', demoNotice: 'This is a browser-only simulation. It does not contact media sites, download files, or convert media.',
@@ -19,17 +20,17 @@
       assistantTitle: 'Review before running', assistantBody: 'Describe a batch task and the assistant drafts a queue. In the real app, nothing runs until you confirm the plan.',
       assistantPlaceholder: 'e.g. Convert these clips to MP4', planReady: 'Draft plan', confirm: 'Confirm sample plan', cancel: 'Clear plan', confirmation: 'Plan confirmed. A fictional example was added to Activity.',
       sourceFile: 'Example source file', selectExample: 'Select a sample file', formatMp4: 'MP4 video', formatMp3: 'MP3 audio', formatWav: 'WAV audio', formatFlac: 'FLAC audio', formatWebm: 'WebM video',
-      aboutTitle: 'A cross-platform downloader and converter.', aboutBody: 'Multimedia Downloader combines yt-dlp and ffmpeg in an open-source app for Windows, macOS, Linux, and web. The project also includes an optional AI assistant for planning batch work.',
+      aboutTitle: 'A cross-platform downloader and converter.', aboutBody: 'Multimedia Downloader combines yt-dlp and ffmpeg in a source-available app for Windows, macOS, Linux, and web. The project also includes an optional AI assistant for planning batch work.',
       facts: ['Video and audio downloads', 'Format conversion and audio extraction', 'Batch queue with per-item progress', 'English, 繁體中文, 简体中文'],
       stepsTitle: 'A simple path through the app.', steps: [{ title: 'Add an input', body: 'Paste a supported media URL or choose a local file.' }, { title: 'Set the output', body: 'Pick a format and the options relevant to your task.' }, { title: 'Review the queue', body: 'Check the example items and progress before they finish.' }],
-      sourceTitle: 'Explore the actual project.', sourceBody: 'This site is a guided preview. Visit the repository for source code, releases, and the full user manual. Join the Discord community to meet other users.', sourceCta: 'View the GitHub repository', communityCta: 'Join the Discord community', language: 'Language', footer: 'A learning preview for Multimedia Downloader.', source: 'Project source', community: 'Discord community',
+      sourceTitle: 'Explore the actual project.', sourceBody: 'This site is a guided preview. Visit the repository for source code, releases, and the full user manual. Join the Discord community to meet other users.', sourceCta: 'View the GitHub repository', communityCta: 'Join the Discord community', language: 'Language', footer: '© Kingsley · A learning preview for Multimedia Downloader.', source: 'Project source', community: 'Discord community', contentLicense: 'Content: CC BY-NC-SA 4.0', codeLicense: 'Code: PolyForm Noncommercial 1.0.0',
       urlType: 'URL', videoSource: 'VIDEO SOURCE', resolution: '1080p · MP4', recording: 'FIELD RECORDING', stereo: '48 kHz · Stereo', proposedQueue: 'PROPOSED QUEUE', reviewRequired: 'REVIEW REQUIRED', sampleClipA: 'Sample clip A', sampleClipB: 'Sample clip B', nothingRuns: 'Nothing runs until confirmed.', confirmPlan: 'Confirm plan',
       mockTag: 'Fictional sample', inputRequired: 'Enter a sample URL to continue.', invalidPrompt: 'Add a short task description first.', dropped: 'Drop a sample item here',
     },
     'zh-TW': {
       navProject: '專案', navWorkflows: '工作流程', navAbout: '關於', tryDemo: '試用模擬 App', tryFlow: '試走此流程',
-      title: 'Multimedia Downloader\n互動專案指南。', intro: '跨平台開源媒體下載與轉檔工具。免安裝探索專案功能並體驗常見工作流程。',
-      demoLabel: '互動式 App 預覽', simulated: '模擬操作 · 僅限本機', fieldGuide: '互動指南', mediaTools: '媒體工具', openSource: '開源專案', inBrowser: '瀏覽器示範', localSimulation: '本機模擬',
+      title: 'Multimedia Downloader\n互動專案指南。', intro: '跨平台、原始碼可得的媒體下載與轉檔工具。免安裝探索專案功能並體驗常見工作流程。',
+      demoLabel: '互動式 App 預覽', simulated: '模擬操作 · 僅限本機', fieldGuide: '互動指南', mediaTools: '媒體工具', sourceAvailable: '原始碼可得', inBrowser: '瀏覽器示範', localSimulation: '本機模擬',
       tabDownload: '下載', tabConvert: '轉檔', tabAssistant: 'AI 助理', urlLabel: '媒體網址', urlPlaceholder: '貼上影片或音訊連結', formatLabel: '輸出格式', startDownload: '執行模擬下載', startConvert: '執行模擬轉檔', askAssistant: '產生計畫草稿',
       queueTitle: '活動記錄', queueEmpty: '下一個範例會顯示在這裡。', sampleTitle: '範例項目', sampleDetail: '示範媒體 · 1080p', ready: '等待預覽', running: '正在模擬…', complete: '範例已完成', output: '範例輸出',
       expand: '展開完整介面', close: '關閉完整介面', demoNotice: '這是純瀏覽器模擬，不會連線至媒體網站、下載檔案或轉換媒體。',
@@ -39,17 +40,17 @@
       assistantTitle: '確認後才執行', assistantBody: '描述批次工作，AI 助理會先產生佇列草稿。真實 App 也必須在你確認計畫後才會執行。',
       assistantPlaceholder: '例如：將這些影片轉成 MP4', planReady: '計畫草稿', confirm: '確認模擬計畫', cancel: '清除計畫', confirmation: '計畫已確認，虛構範例已加入活動記錄。',
       sourceFile: '範例來源檔案', selectExample: '選擇示範檔案', formatMp4: 'MP4 影片', formatMp3: 'MP3 音訊', formatWav: 'WAV 音訊', formatFlac: 'FLAC 音訊', formatWebm: 'WebM 影片',
-      aboutTitle: '跨平台下載與轉檔工具。', aboutBody: 'Multimedia Downloader 將 yt-dlp 與 ffmpeg 整合於開源 App，支援 Windows、macOS、Linux 與 Web。專案亦包含可選用的 AI 助理，協助規劃批次工作。',
+      aboutTitle: '跨平台下載與轉檔工具。', aboutBody: 'Multimedia Downloader 將 yt-dlp 與 ffmpeg 整合於原始碼可得的 App，支援 Windows、macOS、Linux 與 Web。專案亦包含可選用的 AI 助理，協助規劃批次工作。',
       facts: ['影片及音訊下載', '格式轉換與音訊擷取', '逐項顯示進度的批次佇列', 'English、繁體中文、简体中文'],
       stepsTitle: '輕鬆走過 App 工作流程。', steps: [{ title: '加入輸入項目', body: '貼上支援的媒體網址，或選擇本機檔案。' }, { title: '設定輸出', body: '選擇格式及符合任務需求的選項。' }, { title: '檢視佇列', body: '完成前確認範例項目與處理進度。' }],
-      sourceTitle: '前往了解實際專案。', sourceBody: '此網站是導覽預覽。前往 Repository 查看原始碼、版本發佈與完整使用手冊，也歡迎加入 Discord 社群交流。', sourceCta: '查看 GitHub Repository', communityCta: '加入 Discord 社群', language: '語言', footer: 'Multimedia Downloader 學習預覽。', source: '專案原始碼', community: 'Discord 社群',
+      sourceTitle: '前往了解實際專案。', sourceBody: '此網站是導覽預覽。前往 Repository 查看原始碼、版本發佈與完整使用手冊，也歡迎加入 Discord 社群交流。', sourceCta: '查看 GitHub Repository', communityCta: '加入 Discord 社群', language: '語言', footer: '© Kingsley · Multimedia Downloader 學習預覽。', source: '專案原始碼', community: 'Discord 社群', contentLicense: '內容：CC BY-NC-SA 4.0', codeLicense: '程式碼：PolyForm Noncommercial 1.0.0',
       urlType: '網址', videoSource: '影片來源', resolution: '1080p · MP4', recording: '示範錄音', stereo: '48 kHz · 立體聲', proposedQueue: '計畫佇列', reviewRequired: '需要確認', sampleClipA: '範例片段 A', sampleClipB: '範例片段 B', nothingRuns: '確認計畫前不會執行。', confirmPlan: '確認計畫',
       mockTag: '虛構範例', inputRequired: '請先輸入示範網址。', invalidPrompt: '請先簡短描述任務。', dropped: '拖曳範例項目至此',
     },
     'zh-CN': {
       navProject: '项目', navWorkflows: '工作流程', navAbout: '关于', tryDemo: '试用模拟 App', tryFlow: '体验此流程',
-      title: 'Multimedia Downloader\n互动项目指南。', intro: '跨平台开源媒体下载与转换工具。免安装探索项目功能并体验常见工作流程。',
-      demoLabel: '互动式 App 预览', simulated: '模拟操作 · 仅限本地', fieldGuide: '互动指南', mediaTools: '媒体工具', openSource: '开源项目', inBrowser: '浏览器演示', localSimulation: '本地模拟',
+      title: 'Multimedia Downloader\n互动项目指南。', intro: '跨平台、源代码可得的媒体下载与转换工具。免安装探索项目功能并体验常见工作流程。',
+      demoLabel: '互动式 App 预览', simulated: '模拟操作 · 仅限本地', fieldGuide: '互动指南', mediaTools: '媒体工具', sourceAvailable: '源代码可得', inBrowser: '浏览器演示', localSimulation: '本地模拟',
       tabDownload: '下载', tabConvert: '转换', tabAssistant: 'AI 助手', urlLabel: '媒体网址', urlPlaceholder: '粘贴视频或音频链接', formatLabel: '输出格式', startDownload: '运行模拟下载', startConvert: '运行模拟转换', askAssistant: '生成计划草稿',
       queueTitle: '活动记录', queueEmpty: '下一个示例会显示在这里。', sampleTitle: '示例项目', sampleDetail: '演示媒体 · 1080p', ready: '等待预览', running: '正在模拟…', complete: '示例已完成', output: '示例输出',
       expand: '展开完整界面', close: '关闭完整界面', demoNotice: '这是纯浏览器模拟，不会连接媒体网站、下载文件或转换媒体。',
@@ -59,10 +60,10 @@
       assistantTitle: '确认后才运行', assistantBody: '描述批量任务，AI 助手会先生成队列草稿。真实 App 也必须在你确认计划后才会运行。',
       assistantPlaceholder: '例如：将这些视频转换为 MP4', planReady: '计划草稿', confirm: '确认模拟计划', cancel: '清除计划', confirmation: '计划已确认，虚构示例已添加到活动记录。',
       sourceFile: '示例源文件', selectExample: '选择演示文件', formatMp4: 'MP4 视频', formatMp3: 'MP3 音频', formatWav: 'WAV 音频', formatFlac: 'FLAC 音频', formatWebm: 'WebM 视频',
-      aboutTitle: '跨平台下载与转换工具。', aboutBody: 'Multimedia Downloader 将 yt-dlp 与 ffmpeg 整合到开源 App 中，支持 Windows、macOS、Linux 和 Web。项目还包含可选的 AI 助手，用于规划批量任务。',
+      aboutTitle: '跨平台下载与转换工具。', aboutBody: 'Multimedia Downloader 将 yt-dlp 与 ffmpeg 整合到源代码可得的 App 中，支持 Windows、macOS、Linux 和 Web。项目还包含可选的 AI 助手，用于规划批量任务。',
       facts: ['视频和音频下载', '格式转换与音频提取', '逐项显示进度的批量队列', 'English、繁體中文、简体中文'],
       stepsTitle: '轻松体验 App 工作流程。', steps: [{ title: '添加输入项', body: '粘贴受支持的媒体网址，或选择本地文件。' }, { title: '设置输出', body: '选择格式和符合任务需求的选项。' }, { title: '查看队列', body: '完成前确认示例项目和处理进度。' }],
-      sourceTitle: '前往了解实际项目。', sourceBody: '此网站是导览预览。前往 Repository 查看源代码、版本发布和完整用户手册，也欢迎加入 Discord 社区交流。', sourceCta: '查看 GitHub Repository', communityCta: '加入 Discord 社区', language: '语言', footer: 'Multimedia Downloader 学习预览。', source: '项目源代码', community: 'Discord 社区',
+      sourceTitle: '前往了解实际项目。', sourceBody: '此网站是导览预览。前往 Repository 查看源代码、版本发布和完整用户手册，也欢迎加入 Discord 社区交流。', sourceCta: '查看 GitHub Repository', communityCta: '加入 Discord 社区', language: '语言', footer: '© Kingsley · Multimedia Downloader 学习预览。', source: '项目源代码', community: 'Discord 社区', contentLicense: '内容：CC BY-NC-SA 4.0', codeLicense: '代码：PolyForm Noncommercial 1.0.0',
       urlType: '网址', videoSource: '视频来源', resolution: '1080p · MP4', recording: '演示录音', stereo: '48 kHz · 立体声', proposedQueue: '计划队列', reviewRequired: '需要确认', sampleClipA: '示例片段 A', sampleClipB: '示例片段 B', nothingRuns: '确认计划前不会运行。', confirmPlan: '确认计划',
       mockTag: '虚构示例', inputRequired: '请先输入演示网址。', invalidPrompt: '请先简短描述任务。', dropped: '拖动示例项目至此',
     },
@@ -159,7 +160,7 @@
     <div class="hero-copy">
       <h1>{t.title}</h1>
       <p class="hero-intro">{t.intro}</p>
-      <div class="hero-links"><a class="text-link" href="#workflows">{t.navWorkflows}<svg class="arrow-icon down-icon" aria-hidden="true" viewBox="0 0 16 16"><path d="M8 2v11M4 9l4 4 4-4" /></svg></a><span class="open-source"><span class="status-dot"></span> {t.openSource} · V4.3.11</span></div>
+      <div class="hero-links"><a class="text-link" href="#workflows">{t.navWorkflows}<svg class="arrow-icon down-icon" aria-hidden="true" viewBox="0 0 16 16"><path d="M8 2v11M4 9l4 4 4-4" /></svg></a><span class="source-available"><span class="status-dot"></span> {t.sourceAvailable} · V4.3.11</span></div>
     </div>
     <div class="hero-index" aria-label="Project index"><span>{t.fieldGuide}</span><b>MD / 043</b><span>{t.mediaTools}</span></div>
   </section>
@@ -261,5 +262,5 @@
     <div class="source-actions"><a class="top-cta" href="https://github.com/SpaceSquare640/Multimedia_Downloader" target="_blank" rel="noreferrer">{t.sourceCta}<svg class="arrow-icon" aria-hidden="true" viewBox="0 0 16 16"><path d="M3 13 13 3M5 3h8v8" /></svg></a><a class="community-link" href="https://discord.gg/aaUQVJeCgC" target="_blank" rel="noreferrer">{t.communityCta}<svg class="arrow-icon" aria-hidden="true" viewBox="0 0 16 16"><path d="M3 13 13 3M5 3h8v8" /></svg></a></div>
   </section>
 
-  <footer class="site-footer"><a class="footer-name" href="#top">Multimedia Downloader<span> / {t.fieldGuide}</span></a><span>{t.footer}</span><div class="footer-links"><a href="https://github.com/SpaceSquare640/Multimedia_Downloader" target="_blank" rel="noreferrer">{t.source}<svg class="arrow-icon" aria-hidden="true" viewBox="0 0 16 16"><path d="M3 13 13 3M5 3h8v8" /></svg></a><a href="https://discord.gg/aaUQVJeCgC" target="_blank" rel="noreferrer">{t.community}<svg class="arrow-icon" aria-hidden="true" viewBox="0 0 16 16"><path d="M3 13 13 3M5 3h8v8" /></svg></a></div></footer>
+  <footer class="site-footer"><a class="footer-name" href="#top">Multimedia Downloader<span> / {t.fieldGuide}</span></a><span>{t.footer}</span><div class="footer-links"><a href="https://github.com/SpaceSquare640/Multimedia_Downloader" target="_blank" rel="noreferrer">{t.source}<svg class="arrow-icon" aria-hidden="true" viewBox="0 0 16 16"><path d="M3 13 13 3M5 3h8v8" /></svg></a><a href="https://discord.gg/aaUQVJeCgC" target="_blank" rel="noreferrer">{t.community}<svg class="arrow-icon" aria-hidden="true" viewBox="0 0 16 16"><path d="M3 13 13 3M5 3h8v8" /></svg></a><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noreferrer">{t.contentLicense}</a><a href="https://polyformproject.org/licenses/noncommercial/1.0.0/" target="_blank" rel="noreferrer">{t.codeLicense}</a></div></footer>
 </main>
