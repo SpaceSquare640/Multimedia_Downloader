@@ -13,7 +13,7 @@ phone from a terminal, either as a **CLI** or as the **web UI** in your browser.
 
 ```bash
 pkg install -y git
-git clone https://github.com/SpaceSquare640/Multimedia_Downloader.git
+git clone https://github.com/KingsleyHK0323/Multimedia_Downloader.git
 cd Multimedia_Downloader
 ```
 
@@ -85,7 +85,7 @@ Termux 上可用。從 **F-Droid** 安裝 Termux（非 Play 商店版），建�
 
 ```bash
 pkg install -y git
-git clone https://github.com/SpaceSquare640/Multimedia_Downloader.git
+git clone https://github.com/KingsleyHK0323/Multimedia_Downloader.git
 cd Multimedia_Downloader
 
 # A. 終端機 CLI
