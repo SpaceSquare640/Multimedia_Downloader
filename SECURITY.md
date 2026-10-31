@@ -13,7 +13,7 @@
 Please **do not** open a public issue for security vulnerabilities.
 
 Instead, report privately via GitHub's
-[**Report a vulnerability**](https://github.com/SpaceSquare640/Multimedia_Downloader/security/advisories/new)
+[**Report a vulnerability**](https://github.com/KingsleyHK0323/Multimedia_Downloader/security/advisories/new)
 button (Security → Advisories). We'll acknowledge within a few days and keep you
 posted on the fix.
 
