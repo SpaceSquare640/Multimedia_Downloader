@@ -15,7 +15,7 @@ See [Project layout](README.md#project-layout) in the README. In short:
 ## Dev setup
 
 ```bash
-git clone https://github.com/SpaceSquare640/Multimedia_Downloader.git
+git clone https://github.com/KingsleyHK0323/Multimedia_Downloader.git
 cd Multimedia_Downloader
 npm install            # Tauri CLI + frontend toolchain (needs Node, Rust, Python 3.8+)
 npm run tauri dev      # desktop app in dev mode
@@ -47,5 +47,5 @@ reviewable PRs are easier to merge. See the PR template for the checklist.
 
 ## Reporting bugs / requesting features
 
-Use the [issue templates](https://github.com/SpaceSquare640/Multimedia_Downloader/issues/new/choose).
+Use the [issue templates](https://github.com/KingsleyHK0323/Multimedia_Downloader/issues/new/choose).
 For security issues, see [SECURITY.md](SECURITY.md).
