@@ -23,7 +23,7 @@ if [ ! -f frontend/dist/index.html ]; then
   # Use a writable temp dir. Termux has no /tmp — $TMPDIR points at $PREFIX/tmp.
   zip="${TMPDIR:-/tmp}/mmdl-dist.zip"
   curl -L -o "$zip" \
-    "https://github.com/SpaceSquare640/Multimedia_Downloader/releases/latest/download/frontend-dist.zip"
+    "https://github.com/KingsleyHK0323/Multimedia_Downloader/releases/latest/download/frontend-dist.zip"
   mkdir -p frontend && rm -rf frontend/dist
   MMDL_ZIP="$zip" python - <<'PY'
 import os, zipfile
